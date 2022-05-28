@@ -139,10 +139,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="company.cpp" />
+    <ClCompile Include="emplyee.cpp" />
+    <ClCompile Include="hash_table.cpp" />
+    <ClCompile Include="library2.cpp" />
+    <ClCompile Include="linked_list.cpp" />
     <ClCompile Include="main2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="companies_uf.h" />
+    <ClInclude Include="company.h" />
+    <ClInclude Include="emplyee.h" />
+    <ClInclude Include="hash_table.h" />
     <ClInclude Include="library2.h" />
+    <ClInclude Include="linked_list.h" />
+    <ClInclude Include="ranked_avl_tree.h" />
+    <ClInclude Include="system_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
