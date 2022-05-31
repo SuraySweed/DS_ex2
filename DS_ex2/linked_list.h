@@ -13,7 +13,6 @@ public:
 
 	Employee* data;
 	Node* next;
-
 };
 
 class LinkedList {

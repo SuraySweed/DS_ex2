@@ -59,7 +59,7 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
-	return (employees[index]);
+	return (employees[index]->find();
 }
 
 bool HashTable::insert(Employee& employee)
@@ -81,10 +81,12 @@ bool HashTable::insert(Employee& employee)
 	return true;
 }
 
+/*
 Employee*& HashTable::operator[](int index)
 {
 	if (index < 0 || index >= size) {
 		//throw exception
 	}
-	return employees[index];
+	//return employees[index];
 }
+*/

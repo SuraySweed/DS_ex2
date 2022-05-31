@@ -9,7 +9,7 @@ class HashTable {
 private:
 	int size;
 	int counter;
-	LinkedList** employees; //array of LinkedList, every value of some index of the array is a linked list of employees 
+	LinkedList** employees; //array of LinkedList, the value of every index of the array is a linked list of employees 
 	static const int init_size = 10;
 
 public:
@@ -24,7 +24,7 @@ public:
 
 	bool insert(Employee& employee);
 	bool remove(Employee& employee);
-	Employee*& operator[](int index);
+	//Employee*& operator[](int index);
 	int getCounter() { return counter; }
 };
 
