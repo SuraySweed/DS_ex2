@@ -27,18 +27,18 @@
     <ClCompile Include="company.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="emplyee.cpp">
+    <ClCompile Include="employee.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="linked_list.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="library2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ranked_avl_tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="company.h">
@@ -47,7 +47,7 @@
     <ClInclude Include="hash_table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="emplyee.h">
+    <ClInclude Include="employee.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="linked_list.h">
@@ -57,6 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="companies_uf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inverted_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ranked_avl_tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

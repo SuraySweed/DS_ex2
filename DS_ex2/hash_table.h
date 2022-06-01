@@ -2,14 +2,21 @@
 #define HASH_TABLE_H_
 
 #include <iostream>
-#include "emplyee.h"
+#include "employee.h"
 #include "linked_list.h"
+
+typedef enum {
+	HASH_TABLE_SUCCESS = 0,
+	HASH_TABLE_EMPLOYEE_NOT_FOUND = -1,
+	HASH_TABLE_ALLOCATION_ERROR = -2,
+	HASH_TABLE_EMPLOYEE_ALREADY_EXISTS = -4,
+} HashTableStatus;
 
 class HashTable {
 private:
 	int size;
 	int counter;
-	LinkedList** employees; //array of LinkedList, the value of every index of the array is a linked list of employees 
+	LinkedList** employees; //pointer to array of LinkedList, the value of every index of the array is a linked list of employees 
 	static const int init_size = 10;
 
 public:
@@ -22,8 +29,8 @@ public:
 	int HashFunction(int employee_id);
 	Employee* find(int employee_id);
 
-	bool insert(Employee& employee);
-	bool remove(Employee& employee);
+	HashTableStatus insert(Employee& employee);
+	HashTableStatus remove(Employee& employee);
 	//Employee*& operator[](int index);
 	int getCounter() { return counter; }
 };

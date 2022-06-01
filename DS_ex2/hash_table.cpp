@@ -29,8 +29,8 @@ void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_
 	for (int i = 0; i < old_size; i++) {
 		if (old_employees_array[i]) {
 			employeesInBlock = old_employees_array[i];
-			count++;
 		}
+		count = employeesInBlock->getSize();
 		delete old_employees_array[i];
 	}
 	delete[] old_employees_array;
@@ -59,10 +59,10 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
-	return (employees[index]->find();
+	return ((employees[index]->find(employee_id))->data);
 }
 
-bool HashTable::insert(Employee& employee)
+HashTableStatus HashTable::insert(Employee& employee)
 {
 	if (counter == size / 2) {
 		resize(2 * size, employees, size);
@@ -70,15 +70,37 @@ bool HashTable::insert(Employee& employee)
 	
 	int index = HashFunction(employee.getID());
 	
-	if (employees[index] && employees[index]->find(employee)) {
-		return false; //employee already exist in the hash table of the employees
+	if (employees[index] && find(employee.getID())) {
+		return HASH_TABLE_EMPLOYEE_ALREADY_EXISTS; //employee already exist in the hash table of the employees
 	}
-	else {
+
+	if (!employees[index]) {
 		employees[index] = new LinkedList();
-		employees[index]->insert(employee);
-		counter++;
 	}
-	return true;
+	
+	employees[index]->insert(employee);
+	counter++;
+	return HASH_TABLE_SUCCESS;
+}
+
+HashTableStatus HashTable::remove(Employee& employee)
+{
+	if (counter == size / 4) {
+		resize(0.5 * size, employees, size);
+	}
+
+	int index = HashFunction(employee.getID());
+	if (!employees[index] || !employees[index]->find(employee.getID())) {
+		return HASH_TABLE_EMPLOYEE_NOT_FOUND;
+	}
+	
+	employees[index]->remove(employee.getID());
+	if (!employees[index]->getHead()) {
+		delete employee[index]; //delete linkedlist
+		employees[index] = nullptr;
+	}
+	counter--;
+	return HASH_TABLE_SUCCESS;
 }
 
 /*

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "ranked_avl_tree.h"
-#include "emplyee.h"
+#include "employee.h"
 
 class Company {
 private:
@@ -24,6 +24,9 @@ public:
 	int getNumOfZeroSalaryEmployees() { return num_of_employees_with_zero_salary; }
 	int getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
 	
+	bool addEmployee(Employee* employee);
+	bool removeEmployee(Employee* employee);
+
 	bool operator<(const Company& other) const;
 	bool operator>(const Company& other) const;
 	bool operator==(const Company& other) const;

@@ -2,7 +2,7 @@
 #define NODE_H_
 
 #include <iostream>
-#include "emplyee.h"
+#include "employee.h"
 
 class Node {
 public:
@@ -27,11 +27,12 @@ public:
 	~LinkedList();
 
 	void insert(const Employee& employee);
-	void remove(const Employee& employee);
-	Node* find(const Employee& employee);
+	void remove(const int id);
+	Node* find(const int id);
 	Employee* getEmployeeData(Node* node);
 	void setHead(Node* newHead);
 	Node* getHead() { return head; }
+	int getSize() { return size; }
 };
 
 #endif //NODE_H

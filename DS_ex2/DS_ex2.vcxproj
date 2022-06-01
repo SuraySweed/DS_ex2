@@ -140,17 +140,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="company.cpp" />
-    <ClCompile Include="emplyee.cpp" />
+    <ClCompile Include="employee.cpp" />
     <ClCompile Include="hash_table.cpp" />
     <ClCompile Include="library2.cpp" />
     <ClCompile Include="linked_list.cpp" />
     <ClCompile Include="main2.cpp" />
+    <ClCompile Include="system_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="companies_uf.h" />
     <ClInclude Include="company.h" />
-    <ClInclude Include="emplyee.h" />
+    <ClInclude Include="employee.h" />
     <ClInclude Include="hash_table.h" />
+    <ClInclude Include="inverted_tree.h" />
     <ClInclude Include="library2.h" />
     <ClInclude Include="linked_list.h" />
     <ClInclude Include="ranked_avl_tree.h" />

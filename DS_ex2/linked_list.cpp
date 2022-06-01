@@ -57,6 +57,7 @@ LinkedList& LinkedList::operator=(const LinkedList& linked_list)
             this->insert(*(linked_list.head->data));
             currentNode = currentNode->next;
         }
+        size = linked_list.size;
     }
     return *this;
 }
@@ -89,20 +90,20 @@ void LinkedList::insert(const Employee& employee)
     size++;
 }
 
-void LinkedList::remove(const Employee& employee)
+void LinkedList::remove(const int id)
 {
     if (!head) {
         return;
     }
     Node* currentNode = head;
-    if (*(currentNode->data) == employee) {
+    if (currentNode->data->getID() == id) {
         head = head->next;
         delete currentNode;
         size--;
         return;
     }
     while (currentNode) {
-        if (*(currentNode->data) == employee) {
+        if (currentNode->data->getID() == id) {
             Node* toDelete = currentNode;
             Node* tempNode = toDelete->next;
             currentNode = tempNode;
@@ -114,11 +115,11 @@ void LinkedList::remove(const Employee& employee)
     }
 }
 
-Node* LinkedList::find(const Employee& employee)
+Node* LinkedList::find(const int id)
 {
     Node* currentNode = head;
     while (currentNode) {
-        if (*(currentNode->data) == employee) {
+        if (currentNode->data->getID() == id) {
             return currentNode;
         }
         currentNode = currentNode->next;
