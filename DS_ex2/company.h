@@ -26,6 +26,8 @@ public:
 	
 	bool addEmployee(Employee* employee);
 	bool removeEmployee(Employee* employee);
+	void incZeroSalaryEmployees(Employee* employee);
+	void decZeroSalaryEmployees(Employee* employee);
 
 	bool operator<(const Company& other) const;
 	bool operator>(const Company& other) const;

@@ -1,4 +1,4 @@
-#include "emplyee.h"
+#include "employee.h"
 
 Employee::Employee(int employeeID, int employeeSalary, int employeeGrade, std::shared_ptr<int> comapnyID) :
 	id(employeeID), salary(employeeSalary), grade(employeeGrade), company_id(std::move(company_id)) {}

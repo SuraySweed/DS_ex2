@@ -22,6 +22,7 @@ public:
 	int getSalary() { return salary; }
 	int getGrade() { return grade; }
 	int getCompanyID() { return *company_id; }
+	std::shared_ptr<int> getCompanyIDPtr() { return company_id; }
 
 	void setSalary(int newSalary) { salary = newSalary; }
 	void setGrade(int newGrade) { grade = newGrade; }
