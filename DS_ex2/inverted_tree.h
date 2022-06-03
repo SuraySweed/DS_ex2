@@ -40,6 +40,7 @@ public:
 	InvertedTree<T>& operator=(const InvertedTree<T>& invertedTree) = default;
 	~InvertedTree();
 	
+	T getData() { return data; }
 	InvertedTree<T>* find(InvertedTree<T>* tree);
 	void unionFun(InvertedTree<T>* leaf, InvertedTree<T>* secondLeaf);
 	//InvertedTreeNode<T>* getRoot(InvertedTreeNode<T>* leaf);

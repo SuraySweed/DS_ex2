@@ -13,7 +13,7 @@ bool SystemManager::removeEmployeeeFromEmployeesTree(Employee* employee)
 
 bool SystemManager::removeEmployeeeFromTheCompany(Employee* employee, int company_id)
 {
-	if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(employee)) {
+	if (!getCompany(company_id)->removeEmployee(employee)) {
 		return false;
 	}
 
@@ -22,18 +22,23 @@ bool SystemManager::removeEmployeeeFromTheCompany(Employee* employee, int compan
 
 void SystemManager::decZeroSalaryDataInCompany(Employee* employee, int company_id)
 {
-	companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(employee);
+	getCompany(company_id)->decZeroSalaryEmployees(employee);
 }
 
 bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int company_id)
 {
 	if (!employeesTree->insert(employee, employee->getGrade()) &&
-		!companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(employee))
+		!getCompany(company_id)->addEmployee(employee))
 	{
 		return false;
 	}
 
 	return true;
+}
+
+Company* SystemManager::getCompany(int company_id)
+{
+	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
 }
 
 SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
@@ -201,4 +206,37 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 	}
 
 	return SUCCESS;
+}
+
+StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m, void* sumBumpGrade)
+{
+	if (!sumBumpGrade || companyID > number_of_companies || companyID < 0 || m <= 0) {
+		return INVALID_INPUT;
+	}
+
+	if (companyID > 0) {
+		if (getCompany(companyID)->getNumberOfEmployeesNonZero() < m) {
+			return FAILURE;
+		}
+		getCompany(companyID)->sumBumpGradesInCompany(m, sumBumpGrade);
+	}
+
+	else {
+		if (employeesTree->getNumberOfNodes() < m) {
+			return FAILURE;
+		}
+		employeesTree->sumBumpGrade(m, sumBumpGrade);
+	}
+
+	return SUCCESS;
+}
+
+StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary, void* averageBumpGrade)
+{
+	if (!averageBumpGrade || higherSalary < 0 || lowerSalary < 0 ||
+		lowerSalary > higherSalary || companyID < 0 || companyID > number_of_companies) {
+		return INVALID_INPUT;
+	}
+
+
 }

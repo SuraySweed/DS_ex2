@@ -14,6 +14,11 @@ bool Employee::operator<(const Employee& other) const
 	return false;
 }
 
+bool Employee::operator<(const int& other) const
+{
+	return (this->salary < other);
+}
+
 bool Employee::operator>(const Employee& other) const
 {
 	if (this->salary > other.salary) {
@@ -23,6 +28,11 @@ bool Employee::operator>(const Employee& other) const
 		return (this->id > other.id);
 	}
 	return false;
+}
+
+bool Employee::operator>(const int& other) const
+{
+	return (this->salary > other);
 }
 
 bool Employee::operator==(const Employee& other) const

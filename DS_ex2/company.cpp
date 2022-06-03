@@ -37,6 +37,11 @@ void Company::decZeroSalaryEmployees(Employee* employee)
 	}
 }
 
+void Company::sumBumpGradesInCompany(int m, int* sum)
+{
+	employees.sumBumpGrade(m, sum);
+}
+
 bool Company::operator<(const Company& other) const
 {
 	return (this->id < other.id);

@@ -23,11 +23,13 @@ public:
 	int getValue() { return value; }
 	int getNumOfZeroSalaryEmployees() { return num_of_employees_with_zero_salary; }
 	int getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
-	
+	int getNumberOfEmployeesNonZero() { return employees.getNumberOfNodes(); }
+
 	bool addEmployee(Employee* employee);
 	bool removeEmployee(Employee* employee);
 	void incZeroSalaryEmployees(Employee* employee);
 	void decZeroSalaryEmployees(Employee* employee);
+	void sumBumpGradesInCompany(int m, int* sum);
 
 	bool operator<(const Company& other) const;
 	bool operator>(const Company& other) const;
