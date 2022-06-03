@@ -16,11 +16,10 @@ public:
 	int Grade;
 	int sumOfGrades;
 	int rank;
-	//need to add numberOfChildren for the rank purpose
-
+	
 	TreeNode(const T& data_t);
 	TreeNode(T* data_t) : data(new T(*data_t)), left(nullptr), right(nullptr),
-		Grade(0), sumOfGrades(0), rank(1) {}
+		Grade(0), sumOfGrades(0), rank(0) {}
 	TreeNode(const TreeNode<T>& node);
 	TreeNode<T>& operator=(const TreeNode<T>& node);
 	~TreeNode();
@@ -37,10 +36,12 @@ class RankedAVL {
 	TreeNode<T>* leftRotate(TreeNode<T>* root);
 	TreeNode<T>* balanceTree(TreeNode<T>* root);
 	TreeNode<T>* copyNodes(TreeNode<T>* root);
-	//void initRank(TreeNode<T>* node);
 	void deleteTree(TreeNode<T>* root);
-	//int rank(TreeNode<T>* root, const T* data);
 	TreeNode<T>* selectAux(TreeNode<T>* root, int k, int& r);
+	void mergeArray(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[]);
+	TreeNode<T>* doMergerTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[]);
+	TreeNode<T>* auxBuildTree(int left, int right, TreeNode<T>* root, T** newArr, int grades[]);
+	void inorderArray(TreeNode<T>* root, T** arr, int& i);
 
 public:
 	RankedAVL<T>() : _root(nullptr), NodesNumber(0) {}
@@ -51,15 +52,13 @@ public:
 	int getHeight(TreeNode<T>* node);
 	int getBalance(TreeNode<T>* node);
 	int getNodesNumber();
-	//TreeNode<T>* insertAux(TreeNode<T>* root, T* data);
-	TreeNode<T>* insert(TreeNode<T>* root, T* data, int grade, int sumOfGrade);
-	//TreeNode<T>* removeAux(TreeNode<T>* root, T* data);
+	TreeNode<T>* insert(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank);
 	TreeNode<T>* remove(TreeNode<T>* root, T* data, int grade);
-	void initRank(TreeNode<T>* node);
 	TreeNode<T>* getRoot() { return _root; }
 	TreeNode<T>* find(TreeNode<T>* root, const T& data);
 	TreeNode<T>* select(TreeNode<T>* root, int k);
-	void mergeTree(T** arr1, int size1, T** arr2, int size2, T** newArr);
+	void fillArray(T* arr[]);
+	void mergeTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[]);
 	TreeNode<T>* findMinNodeInSubTree(TreeNode<T>* subTreeRoot);
 };
 
@@ -96,6 +95,10 @@ inline TreeNode<T>& TreeNode<T>::operator=(const TreeNode<T>& node)
 		return *this;
 	}
 	data = new T(*(node.data));
+	Grade = node.Grade;//////////////
+	sumOfGrades = node.sumOfGrades;
+	rank = node.rank;
+
 	if (node.left) {
 		left = new TreeNode<T>(*(node.left));
 	}
@@ -131,9 +134,12 @@ inline TreeNode<T>* RankedAVL<T>::rightRotate(TreeNode<T>* root)
 
 	root_left->right = root;
 	root_left->sumOfGrades += root->sumOfGrades;
+	root_left->rank += root->rank;
 	root->left = root_right;
-	if (root_right)
+	if (root_right) {
 		root_right->sumOfGrades += root->Grade;
+		root_right->rank += 1;
+	}
 
 	return root_left;
 }
@@ -146,9 +152,12 @@ inline TreeNode<T>* RankedAVL<T>::leftRotate(TreeNode<T>* root)
 
 	root_right->left = root;
 	root->sumOfGrades -= root_right->sumOfGrades;
+	root->rank -= root_right->rank;
 	root->right = root_left;
-	if (root_left)
+	if (root_left) {
 		root_left->sumOfGrades -= root_right->Grade;
+		root_left->rank -= 1;
+	}
 
 	return root_right;
 }
@@ -187,7 +196,7 @@ inline TreeNode<T>* RankedAVL<T>::copyNodes(TreeNode<T>* root)
 	}
 }
 
-template<class T>
+/*template<class T>
 inline void RankedAVL<T>::initRank(TreeNode<T>* node)//need to fix this function
 {
 	if (!node)
@@ -206,7 +215,7 @@ inline void RankedAVL<T>::initRank(TreeNode<T>* node)//need to fix this function
 	}
 	node->rank = leftR + rightR + 1;
 
-}
+}*/
 
 template<class T>
 inline void RankedAVL<T>::deleteTree(TreeNode<T>* root)
@@ -218,13 +227,26 @@ inline void RankedAVL<T>::deleteTree(TreeNode<T>* root)
 	delete root;
 }
 
-
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::select(TreeNode<T>* root, int k)
 {
 	int r = -1;
 	TreeNode<T>* tmp = selectAux(root, k, r);
 	return tmp;
+}
+
+template<class T>
+inline void RankedAVL<T>::fillArray(T* arr[])
+{
+	int i = 0;
+	inorderArray(_root, arr, i);
+}
+
+template<class T>
+inline void RankedAVL<T>::mergeTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[])
+{
+	_root = doMergerTree(arr1, grades1, size1, arr2, grades2, size2, newArr, grades);
+	NodesNumber = size1 + size2;
 }
 
 
@@ -254,6 +276,88 @@ inline TreeNode<T>* RankedAVL<T>::selectAux(TreeNode<T>* root, int k, int& r)
 		r++;
 		return selectAux(root->right, k, r);
 	}
+}
+
+template<class T>
+inline void RankedAVL<T>::mergeArray(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[])
+{
+	int i = 0, j = 0, k = 0;
+	while (i < size1 && j < size2) {
+		if (*arr1[i] < *arr2[j]) {
+			newArr[k] = arr1[i];
+			grades[k] = grades1[i];
+			i++;
+			k++;
+		}
+		else {
+			newArr[k] = arr2[j];
+			grades[k] = grades2[j];
+			j++;
+			k++;
+		}
+	}
+	if (i >= size1) {
+		while (j < size2) {
+			newArr[k] = arr2[j];
+			grades[k] = grades2[j];
+			j++;
+			k++;
+		}
+	}
+	if (j >= size2) {
+		while (i < size1) {
+			newArr[k] = arr1[i];
+			grades[k] = grades1[i];
+			i++;
+			k++;
+		}
+	}
+}
+
+template<class T>
+inline TreeNode<T>* RankedAVL<T>::doMergerTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[])
+{
+	mergeArray(arr1, grades1, size1, arr2, grades2, size2, newArr, grades);
+	TreeNode<T>* root = nullptr;
+	int left = 0;
+	int right = size1 + size2 - 1;
+	TreeNode<T>* newRoot = auxBuildTree(left, right, root, newArr, grades);
+	return newRoot;
+}
+
+template<class T>
+inline TreeNode<T>* RankedAVL<T>::auxBuildTree(int left, int right, TreeNode<T>* root, T** newArr, int grades[])
+{
+	if (right < left)
+		return nullptr;
+	root = new TreeNode<T>(new T(*(newArr[((right + left) / 2)])));
+	root->Grade = grades[((right + left) / 2)];
+	root->left = auxBuildTree(left, ((right + left) / 2) - 1, root->left, newArr, grades);
+	if (root->left) {
+		root->left->rank += 1;
+		root->left->sumOfGrades += root->Grade;
+	}
+	root->right = auxBuildTree(((left + right) / 2) + 1, right, root->right, newArr, grades);
+
+	root->rank = root->right ? root->right->rank + 1 : 0;
+	root->sumOfGrades = root->right ? (root->right->sumOfGrades + root->right->Grade) : 0;
+	if (root->right && root->right->left) {
+		root->rank += root->right->left->rank + 1;
+		root->sumOfGrades += root->right->left->sumOfGrades + root->right->left->Grade - root->right->Grade;
+	}
+	return root;
+}
+
+template<class T>
+inline void RankedAVL<T>::inorderArray(TreeNode<T>* root, T** arr, int& i)
+{
+	if (root == nullptr)
+		return;
+	inorderArray(root->left, arr, i);
+	arr[i] = (root->data);
+	i++;
+	inorderArray(root->right, arr, i);
+	return;
 }
 
 template<class T>
@@ -303,12 +407,13 @@ inline int RankedAVL<T>::getNodesNumber()
 }
 
 template<class T>
-inline TreeNode<T>* RankedAVL<T>::insert(TreeNode<T>* root, T* data, int grade, int sumOfGrade)
+inline TreeNode<T>* RankedAVL<T>::insert(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank)
 {
 	if (root == nullptr) {
 		TreeNode<T>* new_root = new TreeNode<T>(*data);
 		new_root->Grade = grade;
 		new_root->sumOfGrades = sumOfGrade;
+		new_root->rank = rank;
 		if (_root == nullptr) {
 			_root = new_root;
 		}
@@ -318,11 +423,13 @@ inline TreeNode<T>* RankedAVL<T>::insert(TreeNode<T>* root, T* data, int grade, 
 
 	if (root && (*(root->data) > * data)) {
 		sumOfGrade += root->Grade;
-		root->left = insert(root->left, data, grade, sumOfGrade);
+		rank++;
+		root->left = insert(root->left, data, grade, sumOfGrade, rank);
 	}
 	else if (root && (*(root->data) < *data)) {
 		root->sumOfGrades += grade;
-		root->right = insert(root->right, data, grade, sumOfGrade);
+		root->rank++;
+		root->right = insert(root->right, data, grade, sumOfGrade, rank);
 	}
 	else {
 		return root;
@@ -346,6 +453,7 @@ inline TreeNode<T>* RankedAVL<T>::remove(TreeNode<T>* root, T* data, int grade)
 
 	else if (*(root->data) < *data) {
 		root->sumOfGrades -= grade;
+		root->rank--;
 		root->right = remove(root->right, data, grade);
 	}
 
@@ -372,7 +480,8 @@ inline TreeNode<T>* RankedAVL<T>::remove(TreeNode<T>* root, T* data, int grade)
 			*(root->data) = *(temp->data);
 			root->Grade = temp->Grade;
 			root->sumOfGrades -= temp->Grade;
-			root->left->sumOfGrades += (temp->Grade - root->Grade);
+			root->rank--;
+			root->left->sumOfGrades += (temp->Grade - root->Grade);/////maybe need to dic rank
 			root->right = remove(root->right, temp->data, grade);
 		}
 	}
