@@ -59,7 +59,7 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
-	return ((employees[index]->find(employee_id))->data);
+	return ((employees[index]->find(employee_id))->data); // find in linkedlist
 }
 
 HashTableStatus HashTable::insert(Employee& employee)
@@ -71,7 +71,7 @@ HashTableStatus HashTable::insert(Employee& employee)
 	int index = HashFunction(employee.getID());
 	
 	if (employees[index] && find(employee.getID())) {
-		return HASH_TABLE_EMPLOYEE_ALREADY_EXISTS; //employee already exist in the hash table of the employees
+		return HASH_TABLE_EMPLOYEE_ALREADY_EXISTS; 
 	}
 
 	if (!employees[index]) {

@@ -6,7 +6,7 @@ Company::Company(int companyID, int companyValue) : id(companyID), value(company
 
 bool Company::addEmployee(Employee* employee)
 {
-	if (employees.insert(employee)) {
+	if (employees.insert(employee, employee->getGrade())) {
 		return true;
 	}
 	return false;
@@ -14,10 +14,10 @@ bool Company::addEmployee(Employee* employee)
 
 bool Company::removeEmployee(Employee* employee)
 {
-	TreeNode<Employee>* returnedNode = employees.remove(employee); // return nullptr if there is one node, and we remove it3
+	TreeNode<Employee>* returnedNode = employees.remove(employee, employee->getGrade()); // return nullptr if there is one node, and we remove it3
 	int company_employees_number = employees.getNumberOfNodes();
 	
-	if ((!returnedNode && company_employees_number == 1) || (returnedNode && company_employees_number > 1)) { 
+	if ((!returnedNode && company_employees_number == 0) || (returnedNode && company_employees_number >= 1)) { 
 		return true;
 	}
 	return false;

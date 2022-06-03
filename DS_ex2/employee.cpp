@@ -9,7 +9,7 @@ bool Employee::operator<(const Employee& other) const
 		return true;
 	}
 	else if (this->salary == other.salary) {
-		return (this->id > other.id);
+		return (this->id < other.id);
 	}
 	return false;
 }
@@ -20,7 +20,7 @@ bool Employee::operator>(const Employee& other) const
 		return true;
 	}
 	else if (this->salary == other.salary) {
-		return (this->id < other.id);
+		return (this->id > other.id);
 	}
 	return false;
 }

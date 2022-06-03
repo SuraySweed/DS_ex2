@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+/*
 template <class T>
 class InvertedTreeNode {
 private:
@@ -20,20 +21,26 @@ public:
 
 	T getData() { return data; }
 };
-
+*/
 
 template <class T>
 class InvertedTree {
 private:
-	InvertedTreeNode<T>* node;
+	//InvertedTreeNode<T>* node;
+	int key;
+	T data;
+	int size;
+	int acquired_value;
+	InvertedTree* next;
+
 
 public:
-	InvertedTree(int key, T data) : node(new InvertedTreeNode<T>(key, data)) {}
+	InvertedTree(int key, T data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
 	InvertedTree(const InvertedTree<T>& invertedTree) = default;
 	InvertedTree<T>& operator=(const InvertedTree<T>& invertedTree) = default;
 	~InvertedTree();
 	
-	InvertedTreeNode<T>* find(InvertedTree<T>* leaf);
+	InvertedTree<T>* find(InvertedTree<T>* tree);
 	void unionFun(InvertedTree<T>* leaf, InvertedTree<T>* secondLeaf);
 	//InvertedTreeNode<T>* getRoot(InvertedTreeNode<T>* leaf);
 };
@@ -49,15 +56,15 @@ inline InvertedTree<T>::~InvertedTree()
 }
 
 template<class T>
-inline InvertedTreeNode<T>* InvertedTree<T>::find(InvertedTree<T>* leaf)
+inline InvertedTree<T>* InvertedTree<T>::find(InvertedTree<T>* tree)
 {
-	InvertedTreeNode<T>* head = leaf->node;
+	InvertedTree<T>* head = tree;
 	while (head->next) {
 		head = head->next;
 	}
 
-	InvertedTreeNode<T>* node = leaf;
-	InvertedTreeNode<T>* temp;
+	InvertedTree<T>* node = tree;
+	InvertedTree<T>* temp;
 	while (node->next) {
 		temp = node->next;
 		node->next = head;
@@ -69,8 +76,8 @@ inline InvertedTreeNode<T>* InvertedTree<T>::find(InvertedTree<T>* leaf)
 template<class T>
 inline void InvertedTree<T>::unionFun(InvertedTree<T>* leaf, InvertedTree<T>* secondLeaf)
 {
-	auto leaf1 = find(leaf->node);
-	auto leaf2 = find(secondLeaf->node);
+	auto leaf1 = find(leaf);
+	auto leaf2 = find(secondLeaf);
 	leaf2->next = leaf1;
 	leaf1->size += leaf2->size;
 	leaf1->next = nullptr;

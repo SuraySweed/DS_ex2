@@ -2,9 +2,9 @@
 
 bool SystemManager::removeEmployeeeFromEmployeesTree(Employee* employee)
 {
-	TreeNode<Employee>* returnedNode = employeesTree->remove(employee); // return nullptr if there is one node, and we remove it3
+	TreeNode<Employee>* returnedNode = employeesTree->remove(employee, employee->getGrade()); // return nullptr if there is one node, and we remove it3
 	int company_employees_number = employeesTree->getNumberOfNodes();
-	if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
+	if (!(!returnedNode && company_employees_number == 0) || !(returnedNode && company_employees_number >= 1)) {
 		return false;
 	}
 
@@ -27,7 +27,7 @@ void SystemManager::decZeroSalaryDataInCompany(Employee* employee, int company_i
 
 bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int company_id)
 {
-	if (!employeesTree->insert(employee) &&
+	if (!employeesTree->insert(employee, employee->getGrade()) &&
 		!companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(employee))
 	{
 		return false;
@@ -75,15 +75,6 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	*company_id = companyID;
 	Employee employee(employeeID, 0, grade, company_id);
 	
-	/*
-	// adding employee to the company in the companies array
-	// getData return the company
-	if (!companies[companyID - 1]->find(companies[companyID - 1])->getData()->addEmployee(&employee)) {
-		company_id.reset();
-		return FAILURE;
-	}
-	*/
-
 	if (employeesTable->insert(employee) != HASH_TABLE_SUCCESS) {
 		company_id.reset();
 		return FAILURE;
@@ -113,29 +104,12 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	}
 
 	if (salary > 0) {
-		// remove from the big tree
-		/*
-		TreeNode<Employee>* returnedNode = employeesTree->remove(employee); // return nullptr if there is one node, and we remove it3
-		int company_employees_number = employeesTree->getNumberOfNodes();
-		if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
-			return FAILURE;
-		}
-		*/
-
 		if (!removeEmployeeeFromEmployeesTree(employee) && 
 			!removeEmployeeeFromTheCompany(employee, company_id)) {
 			return FAILURE;
 		}
-
-		// remove the employee from the company
-		/*
-		if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(employee)) {
-			return FAILURE;
-		}
-		*/
 	}
 	else {
-		//companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(employee);
 		decZeroSalaryDataInCompany(employee, company_id);
 	}
 
@@ -164,60 +138,29 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	int old_salary = old_employee->getSalary();
 	int new_salary = old_salary + salaryIncrease;
 	int company_id = old_employee->getCompanyID();
-	//Employee new_employee(employeeID, new_salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
-	
-	std::shared_ptr<int> company_id_ptr = std::make_shared<int>();
-	*company_id_ptr = company_id;
-	Employee new_employee(employeeID, new_salary, old_employee->getGrade(), company_id_ptr);
+	Employee new_employee(employeeID, new_salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
+
 	// update the salary in the employees hash table
 	employeesTable->find(employeeID)->setSalary(new_salary);
 
 	// update the trees
 	if (old_salary > 0) {
-		/*
-		TreeNode<Employee>* returnedNode = employeesTree->remove(old_employee);
-		int company_employees_number = employeesTree->getNumberOfNodes();
-		if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
-			return FAILURE;
-		}
-		*/
-
-		/*
-		// remove the employee from the company
-		if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(old_employee)) {
-			return FAILURE;
-		}
-		*/
-
 		if (!removeEmployeeeFromEmployeesTree(old_employee) &&
 			!removeEmployeeeFromTheCompany(old_employee, company_id)) {
 			return FAILURE;
 		}
 
-		/*
-		if (!employeesTree->insert(&new_employee) && 
-			!companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(&new_employee))
-		{
-			return FAILURE;
-		}
-		*/
 		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
 			return FAILURE;
 		}
 	}
+
 	// old salary was 0
 	else {
 		decZeroSalaryDataInCompany(&new_employee, company_id);
 		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
 			return FAILURE;
 		}
-		/*
-		companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(&new_employee);
-		companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(&new_employee);
-		if (!employeesTree->insert(&new_employee)) {
-			return FAILURE;
-		}
-		*/
 	}
 
 	return SUCCESS;
@@ -238,11 +181,8 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 	int salary = old_employee->getSalary();
 	int new_grade = old_employee->getGrade() + bumpGrade;
 	int company_id = old_employee->getCompanyID();
-	std::shared_ptr<int> company_id_ptr = std::make_shared<int>();
-	*company_id_ptr = company_id;
+	Employee new_employee(employeeID, salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
 	
-	Employee new_employee(employeeID, salary, new_grade, company_id_ptr);
-
 	if (bumpGrade > 0) {
 		// update the employee grade in the employees hash table
 		employeesTable->find(employeeID)->setGrade(new_grade);
