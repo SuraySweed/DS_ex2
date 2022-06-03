@@ -1,6 +1,42 @@
 #include "system_manager.h"
 
-SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0), 
+bool SystemManager::removeEmployeeeFromEmployeesTree(Employee* employee)
+{
+	TreeNode<Employee>* returnedNode = employeesTree->remove(employee); // return nullptr if there is one node, and we remove it3
+	int company_employees_number = employeesTree->getNumberOfNodes();
+	if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool SystemManager::removeEmployeeeFromTheCompany(Employee* employee, int company_id)
+{
+	if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(employee)) {
+		return false;
+	}
+
+	return true;
+}
+
+void SystemManager::decZeroSalaryDataInCompany(Employee* employee, int company_id)
+{
+	companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(employee);
+}
+
+bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int company_id)
+{
+	if (!employeesTree->insert(employee) &&
+		!companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(employee))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
 	companies(new InvertedTree<Company*> * [k]), employeesTable(new HashTable()), 
 	employeesTree(new RankedAVL<Employee>())
 
@@ -53,7 +89,6 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 		return FAILURE;
 	}
 	companies[companyID - 1]->find(companies[companyID - 1])->getData()->incZeroSalaryEmployees(&employee);
-
 	number_of_employees++;
 
 	return SUCCESS;
@@ -79,19 +114,29 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 
 	if (salary > 0) {
 		// remove from the big tree
+		/*
 		TreeNode<Employee>* returnedNode = employeesTree->remove(employee); // return nullptr if there is one node, and we remove it3
 		int company_employees_number = employeesTree->getNumberOfNodes();
 		if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
 			return FAILURE;
 		}
+		*/
+
+		if (!removeEmployeeeFromEmployeesTree(employee) && 
+			!removeEmployeeeFromTheCompany(employee, company_id)) {
+			return FAILURE;
+		}
 
 		// remove the employee from the company
+		/*
 		if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(employee)) {
 			return FAILURE;
 		}
+		*/
 	}
 	else {
-		companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(employee);
+		//companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(employee);
+		decZeroSalaryDataInCompany(employee, company_id);
 	}
 
 	number_of_employees--;
@@ -129,30 +174,50 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// update the trees
 	if (old_salary > 0) {
+		/*
 		TreeNode<Employee>* returnedNode = employeesTree->remove(old_employee);
 		int company_employees_number = employeesTree->getNumberOfNodes();
 		if (!(!returnedNode && company_employees_number == 1) || !(returnedNode && company_employees_number > 1)) {
 			return FAILURE;
 		}
+		*/
 
+		/*
 		// remove the employee from the company
 		if (!companies[company_id - 1]->find(companies[company_id - 1])->getData()->removeEmployee(old_employee)) {
 			return FAILURE;
 		}
+		*/
 
+		if (!removeEmployeeeFromEmployeesTree(old_employee) &&
+			!removeEmployeeeFromTheCompany(old_employee, company_id)) {
+			return FAILURE;
+		}
+
+		/*
 		if (!employeesTree->insert(&new_employee) && 
 			!companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(&new_employee))
 		{
 			return FAILURE;
 		}
+		*/
+		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
+			return FAILURE;
+		}
 	}
 	// old salary was 0
 	else {
+		decZeroSalaryDataInCompany(&new_employee, company_id);
+		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
+			return FAILURE;
+		}
+		/*
 		companies[company_id - 1]->find(companies[company_id - 1])->getData()->decZeroSalaryEmployees(&new_employee);
 		companies[company_id - 1]->find(companies[company_id - 1])->getData()->addEmployee(&new_employee);
 		if (!employeesTree->insert(&new_employee)) {
 			return FAILURE;
 		}
+		*/
 	}
 
 	return SUCCESS;
@@ -163,4 +228,37 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 	if (employeeID <= 0) {
 		return INVALID_INPUT;
 	} 
+
+	// employee doesn't exist 
+	Employee* old_employee = employeesTable->find(employeeID);
+	if (!old_employee) {
+		return FAILURE;
+	}
+
+	int salary = old_employee->getSalary();
+	int new_grade = old_employee->getGrade() + bumpGrade;
+	int company_id = old_employee->getCompanyID();
+	std::shared_ptr<int> company_id_ptr = std::make_shared<int>();
+	*company_id_ptr = company_id;
+	
+	Employee new_employee(employeeID, salary, new_grade, company_id_ptr);
+
+	if (bumpGrade > 0) {
+		// update the employee grade in the employees hash table
+		employeesTable->find(employeeID)->setGrade(new_grade);
+
+		// employee exist in the cmployees company tree, employees hash table and in the employees salary tree 
+		if (salary > 0) {
+			if (!removeEmployeeeFromEmployeesTree(old_employee) &&
+				!removeEmployeeeFromTheCompany(old_employee, company_id)) {
+				return FAILURE;
+			}
+
+			if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
+				return FAILURE;
+			}
+		}
+	}
+
+	return SUCCESS;
 }

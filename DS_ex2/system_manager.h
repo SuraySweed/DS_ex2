@@ -19,6 +19,11 @@ private:
 	HashTable* employeesTable;
 	RankedAVL<Employee>* employeesTree;
 
+	bool removeEmployeeeFromEmployeesTree(Employee* employee);
+	bool removeEmployeeeFromTheCompany(Employee* employee, int company_id);
+	void decZeroSalaryDataInCompany(Employee* employee, int company_id);
+	bool insertEmployeeToTreeAndCompany(Employee* employee, int company_id);
+
 public:
 	SystemManager(int k);
 	SystemManager(const SystemManager& system_manager) = default;
