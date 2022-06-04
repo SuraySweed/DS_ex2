@@ -53,6 +53,64 @@ int SystemManager::getNumberOfZeroSalaryEmployees()
 	return (number_of_employees - employeesTree->getNumberOfNodes());
 }
 
+void SystemManager::fillGradesArray(Employee** employees_arr, int grades[] , int size)
+{
+	for (int i = 0; i < size; i++) {
+		grades[i] = employees_arr[i]->getGrade();
+	}
+}
+
+void SystemManager::mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany)
+{
+	int target_employees_number = targetCompany->getNumOfEmployeesInTree();
+	int* target_grades = new int[target_employees_number];
+	Employee** target_employees_arr = new Employee * [target_employees_number];
+	int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
+	int* acquirer_grades = new int[acquirer_employees_number];
+	Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
+
+	targetCompany->fillEmployeesInArray(target_employees_arr);
+	fillGradesArray(target_employees_arr, target_grades, target_employees_number);
+	acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
+	fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
+
+	int total_employees = target_employees_number + acquirer_employees_number;
+	int* total_grades = new int[total_employees];
+	Employee** total_employees_arr = new Employee * [total_employees];
+
+	Employee** target_fill_array = new Employee * [target_employees_number];
+	Employee** acquire_fill_array = new Employee * [acquirer_employees_number];
+	
+	for (int i = 0; i < target_employees_number; i++) {
+		target_fill_array[i] = new Employee(*(target_employees_arr[i]));
+	}
+
+	for (int i = 0; i < acquirer_employees_number; i++) {
+		acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
+	}
+
+	acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
+		acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
+
+	delete targetCompany->getEmployeesTree();
+
+	for (int i = 0; i < target_employees_number; i++) {
+		delete target_fill_array[i];
+	}
+
+	for (int i = 0; i < acquirer_employees_number; i++) {
+		delete acquire_fill_array[i];
+	}
+
+	delete[] target_fill_array;
+	delete[] acquire_fill_array;
+}
+
+void SystemManager::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
+{
+	acquirerCompany->getEmployeesHashTable().mergeTwoHashies(acquirerCompany->getEmployeesHashTable(), targetCompany->getEmployeesHashTable());
+}
+
 /*
 void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
 	, int targetEmployeesNumber, int i)
@@ -165,13 +223,16 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 
 	// acquirerCompany already bought the targetCompany
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
-
-	int target_employees_number = targetCompany->getEmployeesTree()->getNumberOfNodes();
 	
-	// update target company id to acquirer company id in the 3 data structure: company tree, hash and the big tree
+	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
 	updateCompanyIDForEmployees(targetID, acquirerID);
-	//updateCompanyIDForEmployeesByInorder(targetCompany->getEmployeesTree()->getRoot(), acquirerID, target_employees_number, 0);
 
+	//companies[targetID - 1]->unionFun();
+
+	mergeCompaniesTrees(acquirerCompany, targetCompany);
+	mergeCompaniesHashies(acquirerCompany, targetCompany);
+
+	return SUCCESS;
 
 }
 

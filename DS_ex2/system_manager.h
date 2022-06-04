@@ -30,6 +30,9 @@ private:
 	*/
 	void updateCompanyIDForEmployees(int targetID, int acquirerID);
 	int getNumberOfZeroSalaryEmployees();
+	void fillGradesArray(Employee** employees_arr, int grades[], int size);
+	void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
+	void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
 
 public:
 	SystemManager(int k);

@@ -34,6 +34,7 @@ public:
 	//Employee*& operator[](int index);
 	int getCounter() { return counter; }
 	void updateEmployeesCompanyID(int acquirerID);
+	void mergeTwoHashies(HashTable acquirer, HashTable target);
 };
 
 #endif //HASH_TABLE_H

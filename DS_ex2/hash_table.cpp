@@ -110,6 +110,19 @@ void HashTable::updateEmployeesCompanyID(int acquirerID)
 	}
 }
 
+void HashTable::mergeTwoHashies(HashTable acquirer, HashTable target)
+{
+	int target_size = target.getCounter();
+	for (int i = 0; i < target_size; i++) {
+		Node* currentNode = (target.employees)[i]->getHead();
+		for (int listIndex = 0; listIndex < (target.employees)[i]->getSize() && currentNode; listIndex++) {
+			acquirer.insert(*(currentNode->data));
+			target.remove(*(currentNode->data)); // check that
+			currentNode = currentNode->next;
+		}
+	}
+}
+
 /*
 Employee*& HashTable::operator[](int index)
 {
