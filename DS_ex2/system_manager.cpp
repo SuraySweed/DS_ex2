@@ -155,7 +155,10 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	// acquirerCompany already bought the targetCompany
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
 
-	updateCompanyIDForEmployeesByInorder(acquirerID, targetID);
+	int target_employees_number = targetCompany->getEmployeesTree()->getNumberOfNodes();
+	// update target company id to acquirer company id in the 3 data structure: company tree, hash and the big tree
+	updateCompanyIDForEmployeesByInorder(targetCompany->getEmployeesTree()->getRoot(), acquirerID, target_employees_number, 0);
+
 }
 
 StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncrease)
@@ -333,6 +336,6 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		}
 	}
 
-	*averageBumpGrade = ((lowSum - highSum) / (lowRank - highRank));
+	averageBumpGrade = ((lowSum - highSum) / (lowRank - highRank));
 	return SUCCESS;
 }
