@@ -24,6 +24,7 @@ private:
 	void decZeroSalaryDataInCompany(Employee* employee, int company_id);
 	bool insertEmployeeToTreeAndCompany(Employee* employee, int company_id);
 	Company* getCompany(int company_id);
+	void updateCompanyIDForEmployeesByInorder(int acquirerID, int targetID);
 
 public:
 	SystemManager(int k);
@@ -32,7 +33,7 @@ public:
 
 	StatusType AddEmployee(int employeeID, int companyID, int grade);
 	StatusType RemoveEmployee(int employeeID);
-	StatusType AcquireCompany(int companyID1, int companyID2, double factor);
+	StatusType AcquireCompany(int acquirerID, int targetID, double factor);
 	StatusType EmployeeSalaryIncrease(int employeeID, int salaryIncrease);
 	StatusType PromoteEmployee(int employeeID, int bumpGrade);
 	StatusType SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m, void* sumBumpGrade);

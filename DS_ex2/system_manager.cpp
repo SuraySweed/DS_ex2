@@ -41,6 +41,20 @@ Company* SystemManager::getCompany(int company_id)
 	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
 }
 
+void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID, int targetID)
+{
+	if (root == nullptr || k <= 0)
+		return;
+	updateCompanyIDForEmployeesByInorder(root->left, acquirerID, targetID);
+	if (i < k) {
+		root->data->setEmployerID(acquirerID);
+		updateCompanyIDForEmployeesByInorder(root->right, k, arr, i);
+	}
+	return;
+}
+}
+
+
 SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
 	companies(new InvertedTree<Company*> * [k]), employeesTable(new HashTable()), 
 	employeesTree(new RankedAVL<Employee>())
@@ -122,9 +136,21 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	return SUCCESS;
 }
 
-StatusType SystemManager::AcquireCompany(int companyID1, int companyID2, double factor)
+// companyID1 - > acquirerID, companyID2 -> targetID
+StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double factor)
 {
-	return StatusType();
+	if (acquirerID <= 0 || targetID <= 0 || acquirerID > number_of_companies || targetID > number_of_companies ||
+		acquirerID == targetID || factor <= 0) {
+		return INVALID_INPUT;
+	}
+
+	Company* acquirerCompany = getCompany(acquirerID);
+	Company* targetCompany = getCompany(targetID);
+
+	// acquirerCompany already bought the targetCompany
+	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
+
+	updateCompanyIDForEmployeesByInorder(acquirerID, targetID);
 }
 
 StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncrease)
@@ -218,14 +244,14 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 		if (getCompany(companyID)->getNumberOfEmployeesNonZero() < m) {
 			return FAILURE;
 		}
-		getCompany(companyID)->sumBumpGradesInCompany(m, sumBumpGrade);
+		getCompany(companyID)->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
 	}
 
 	else {
 		if (employeesTree->getNumberOfNodes() < m) {
 			return FAILURE;
 		}
-		employeesTree->sumBumpGrade(m, sumBumpGrade);
+		employeesTree->sumBumpGrade(m, (int*)sumBumpGrade);
 	}
 
 	return SUCCESS;
