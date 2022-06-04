@@ -2,7 +2,7 @@
 
 Company::Company(int companyID, int companyValue) : id(companyID), value(companyValue), 
 	num_of_employees_with_zero_salary(0), sum_of_grades_of_zero_salary_employees(0), 
-	employees(RankedAVL<Employee>()) {}
+	employees(RankedAVL<Employee>()), all_employees_table(HashTable()) {}
 
 bool Company::addEmployee(Employee* employee)
 {
@@ -12,12 +12,31 @@ bool Company::addEmployee(Employee* employee)
 	return false;
 }
 
+bool Company::addEmployeeToCompanyHashTable(Employee* employee)
+{
+	if (all_employees_table.insert(*employee) == HASH_TABLE_SUCCESS) {
+		return true;
+	}
+	return false;
+}
+
 bool Company::removeEmployee(Employee* employee)
 {
 	TreeNode<Employee>* returnedNode = employees.remove(employee, employee->getGrade()); // return nullptr if there is one node, and we remove it3
 	int company_employees_number = employees.getNumberOfNodes();
-	
-	if ((!returnedNode && company_employees_number == 0) || (returnedNode && company_employees_number >= 1)) { 
+	//HashTableStatus hash_remove_result = all_employees_table.remove(*employee);
+
+	if ((!returnedNode && company_employees_number == 0) || (returnedNode && company_employees_number >= 1)) {
+		//hash_remove_result == HASH_TABLE_SUCCESS) {
+		return true;
+	}
+	return false;
+}
+
+bool Company::removeEmployeeFromEmployeesHash(Employee* employee)
+{
+	HashTableStatus hash_remove_result = all_employees_table.remove(*employee);
+	if (hash_remove_result == HASH_TABLE_SUCCESS) {
 		return true;
 	}
 	return false;
@@ -40,6 +59,21 @@ void Company::decZeroSalaryEmployees(Employee* employee)
 void Company::sumBumpGradesInCompany(int m, int* sum)
 {
 	employees.sumBumpGrade(m, sum);
+}
+
+void Company::updateEmployeesCompanyID(int acquirerID)
+{
+	all_employees_table.updateEmployeesCompanyID(acquirerID);
+}
+
+void Company::updateSalaryToEmployee(int employeeID, int new_salary)
+{
+	all_employees_table.find(employeeID)->setSalary(new_salary);
+}
+
+void Company::updateGradeForEmployee(int employeeID, int new_grade)
+{
+	all_employees_table.find(employeeID)->setGrade(new_grade);
 }
 
 bool Company::operator<(const Company& other) const

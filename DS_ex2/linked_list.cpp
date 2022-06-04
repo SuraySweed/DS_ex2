@@ -142,3 +142,12 @@ void LinkedList::setHead(Node* newHead)
         head = newHead;
     }
 }
+
+void LinkedList::updateEmployeesCompanyID(int acquirerID)
+{
+    Node* currentNode = head;
+    while (currentNode) {
+        currentNode->data->setEmployerID(acquirerID);
+        currentNode = currentNode->next;
+    }
+}

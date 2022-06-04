@@ -33,6 +33,8 @@ public:
 	void setHead(Node* newHead);
 	Node* getHead() { return head; }
 	int getSize() { return size; }
+
+	void updateEmployeesCompanyID(int acquirerID);
 };
 
 #endif //NODE_H

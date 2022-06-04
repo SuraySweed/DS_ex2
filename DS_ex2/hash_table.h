@@ -33,6 +33,7 @@ public:
 	HashTableStatus remove(Employee& employee);
 	//Employee*& operator[](int index);
 	int getCounter() { return counter; }
+	void updateEmployeesCompanyID(int acquirerID);
 };
 
 #endif //HASH_TABLE_H

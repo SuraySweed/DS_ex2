@@ -2,7 +2,8 @@
 
 bool SystemManager::removeEmployeeeFromEmployeesTree(Employee* employee)
 {
-	TreeNode<Employee>* returnedNode = employeesTree->remove(employee, employee->getGrade()); // return nullptr if there is one node, and we remove it3
+	// return nullptr if there is one node, and we remove it
+	TreeNode<Employee>* returnedNode = employeesTree->remove(employee, employee->getGrade()); 
 	int company_employees_number = employeesTree->getNumberOfNodes();
 	if (!(!returnedNode && company_employees_number == 0) || !(returnedNode && company_employees_number >= 1)) {
 		return false;
@@ -41,11 +42,18 @@ Company* SystemManager::getCompany(int company_id)
 	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
 }
 
+void SystemManager::updateCompanyIDForEmployees(int targetID, int acquirerID)
+{
+	Company* target_company = getCompany(targetID);
+	target_company->updateEmployeesCompanyID(acquirerID);
+}
+
 int SystemManager::getNumberOfZeroSalaryEmployees()
 {
 	return (number_of_employees - employeesTree->getNumberOfNodes());
 }
 
+/*
 void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
 	, int targetEmployeesNumber, int i)
 {
@@ -59,6 +67,7 @@ void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* roo
 	}
 	return;
 }
+*/
 
 SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
 	companies(new InvertedTree<Company*> * [k]), employeesTable(new HashTable()), 
@@ -99,11 +108,13 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	*company_id = companyID;
 	Employee employee(employeeID, 0, grade, company_id);
 	
-	if (employeesTable->insert(employee) != HASH_TABLE_SUCCESS) {
+	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) &&
+		!(getCompany(companyID)->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
 	}
-	companies[companyID - 1]->find(companies[companyID - 1])->getData()->incZeroSalaryEmployees(&employee);
+
+	getCompany(companyID)->incZeroSalaryEmployees(&employee);
 	number_of_employees++;
 
 	return SUCCESS;
@@ -122,8 +133,9 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	int salary = employee->getSalary();
 	int company_id = employee->getCompanyID();
 	
-	// remove employee from the hash table
-	if (employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) {
+	// remove employee from the hash table and from the employees company hash table
+	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) && 
+		!getCompany(company_id)->removeEmployeeFromEmployeesHash(employee)){
 		return FAILURE;
 	}
 
@@ -141,7 +153,6 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	return SUCCESS;
 }
 
-// companyID1 - > acquirerID, companyID2 -> targetID
 StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double factor)
 {
 	if (acquirerID <= 0 || targetID <= 0 || acquirerID > number_of_companies || targetID > number_of_companies ||
@@ -156,8 +167,11 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
 
 	int target_employees_number = targetCompany->getEmployeesTree()->getNumberOfNodes();
+	
 	// update target company id to acquirer company id in the 3 data structure: company tree, hash and the big tree
-	updateCompanyIDForEmployeesByInorder(targetCompany->getEmployeesTree()->getRoot(), acquirerID, target_employees_number, 0);
+	updateCompanyIDForEmployees(targetID, acquirerID);
+	//updateCompanyIDForEmployeesByInorder(targetCompany->getEmployeesTree()->getRoot(), acquirerID, target_employees_number, 0);
+
 
 }
 
@@ -179,8 +193,9 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	int company_id = old_employee->getCompanyID();
 	Employee new_employee(employeeID, new_salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
 
-	// update the salary in the employees hash table
-	employeesTable->find(employeeID)->setSalary(new_salary);
+	// update the salary in the employees hash table, and in the employees company hash table
+	employeesTable->find(employeeID)->setSalary(new_salary);			    // O(1)
+	getCompany(company_id)->updateSalaryToEmployee(employeeID, new_salary); // O(1)
 
 	// update the trees
 	if (old_salary > 0) {
@@ -223,8 +238,9 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 	Employee new_employee(employeeID, salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
 	
 	if (bumpGrade > 0) {
-		// update the employee grade in the employees hash table
+		// update the employee grade in the employees hash table, and company employees hash table
 		employeesTable->find(employeeID)->setGrade(new_grade);
+		getCompany(company_id)->updateGradeForEmployee(employeeID, new_grade);
 
 		// employee exist in the cmployees company tree, employees hash table and in the employees salary tree 
 		if (salary > 0) {

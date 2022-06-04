@@ -103,6 +103,13 @@ HashTableStatus HashTable::remove(Employee& employee)
 	return HASH_TABLE_SUCCESS;
 }
 
+void HashTable::updateEmployeesCompanyID(int acquirerID)
+{
+	for (int hashIndex = 0; hashIndex < size; hashIndex++) {
+		employees[hashIndex]->updateEmployeesCompanyID(acquirerID);
+	}
+}
+
 /*
 Employee*& HashTable::operator[](int index)
 {
