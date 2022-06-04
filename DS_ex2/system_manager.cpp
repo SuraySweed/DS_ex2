@@ -335,7 +335,8 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-
-	averageBumpGrade = ((lowSum - highSum) / (lowRank - highRank));
+	double* average;
+	*average = ((lowSum - highSum) / (lowRank - highRank));
+	averageBumpGrade = average;
 	return SUCCESS;
 }
