@@ -24,6 +24,7 @@ public:
 	int getNumOfZeroSalaryEmployees() { return num_of_employees_with_zero_salary; }
 	int getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
 	int getNumberOfEmployeesNonZero() { return employees.getNumberOfNodes(); }
+	RankedAVL<Employee>* getEmployeesTree() { return &employees; }
 
 	bool addEmployee(Employee* employee);
 	bool removeEmployee(Employee* employee);

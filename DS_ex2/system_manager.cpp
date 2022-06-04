@@ -41,19 +41,24 @@ Company* SystemManager::getCompany(int company_id)
 	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
 }
 
-void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID, int targetID)
+int SystemManager::getNumberOfZeroSalaryEmployees()
 {
-	if (root == nullptr || k <= 0)
+	return (number_of_employees - employeesTree->getNumberOfNodes());
+}
+
+void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
+	, int targetEmployeesNumber, int i)
+{
+	if (root == nullptr || targetEmployeesNumber <= 0)
 		return;
-	updateCompanyIDForEmployeesByInorder(root->left, acquirerID, targetID);
-	if (i < k) {
+	updateCompanyIDForEmployeesByInorder(root->left, acquirerID, targetEmployeesNumber, i);
+	if (i < targetEmployeesNumber) {
 		root->data->setEmployerID(acquirerID);
-		updateCompanyIDForEmployeesByInorder(root->right, k, arr, i);
+		i++;
+		updateCompanyIDForEmployeesByInorder(root->right, acquirerID, targetEmployeesNumber, i);
 	}
 	return;
 }
-}
-
 
 SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
 	companies(new InvertedTree<Company*> * [k]), employeesTable(new HashTable()), 
@@ -257,12 +262,77 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 	return SUCCESS;
 }
 
-StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary, void* averageBumpGrade)
+StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID, 
+	int lowerSalary, int higherSalary, void* averageBumpGrade)
 {
 	if (!averageBumpGrade || higherSalary < 0 || lowerSalary < 0 ||
 		lowerSalary > higherSalary || companyID < 0 || companyID > number_of_companies) {
 		return INVALID_INPUT;
 	}
 
+	int lowSalary = lowerSalary;
+	int highRank = 0;
+	int highSum = 0;
+	int lowRank = 0;
+	int lowSum = 0; 
 
+	//get average of employees in specific company
+	if (companyID > 0) {
+		Company* company = getCompany(companyID);
+		RankedAVL<Employee>* employees_tree = company->getEmployeesTree();
+		TreeNode<Employee>* base_root = employees_tree->getRoot();
+
+		if (lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary() || 
+			((higherSalary != 0) && higherSalary < employees_tree->getMinNodeData(base_root)->getSalary()) ||
+			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0)) {
+			return FAILURE;
+		}
+		
+		if (higherSalary != 0) {
+			if (lowerSalary == 0) {
+				lowSalary = employees_tree->getMinNodeData()->getSalary();
+			}
+			TreeNode<Employee>* highNode = employees_tree->getLastInInterval(base_root, higherSalary);
+			TreeNode<Employee>* lowNode = employees_tree->getFirstInInterval(base_root, lowSalary);
+
+			employees_tree->calcRank(base_root, highNode, &highRank);
+			employees_tree->calcRank(base_root, lowNode, &lowRank);
+			employees_tree->calcSumOfGrades(base_root, highNode, &highSum);
+			employees_tree->calcSumOfGrades(base_root, lowNode, &lowSum);
+		}
+		if (lowerSalary == 0) {
+			lowRank += company->getNumOfZeroSalaryEmployees();
+		}
+	}
+	//get average of all Employees
+	else {
+
+		TreeNode<Employee>* base_root = employeesTree->getRoot();
+
+		if (lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary() ||
+			((higherSalary != 0) && higherSalary < employeesTree->getMinNodeData(base_root)->getSalary()) ||
+			(higherSalary == 0 && getNumberOfZeroSalaryEmployees() == 0)) {
+			return FAILURE;
+		}
+
+		if (higherSalary != 0) {
+			if (lowerSalary == 0) {
+				lowSalary = employeesTree->getMinNodeData(base_root)->getSalary();
+			}
+			
+			TreeNode<Employee>* highNode = employeesTree->getLastInInterval(base_root, higherSalary);
+			TreeNode<Employee>* lowNode = employeesTree->getFirstInInterval(base_root, lowSalary);
+
+			employeesTree->calcRank(base_root, highNode, &highRank);
+			employeesTree->calcRank(base_root, lowNode, &lowRank);
+			employeesTree->calcSumOfGrades(base_root, highNode, &highSum);
+			employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
+		}
+		if (lowerSalary == 0) {
+			lowRank += getNumberOfZeroSalaryEmployees();
+		}
+	}
+
+	*averageBumpGrade = ((lowSum - highSum) / (lowRank - highRank));
+	return SUCCESS;
 }

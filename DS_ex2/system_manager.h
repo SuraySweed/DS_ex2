@@ -24,7 +24,9 @@ private:
 	void decZeroSalaryDataInCompany(Employee* employee, int company_id);
 	bool insertEmployeeToTreeAndCompany(Employee* employee, int company_id);
 	Company* getCompany(int company_id);
-	void updateCompanyIDForEmployeesByInorder(int acquirerID, int targetID);
+	void updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
+		, int targetEmployeesNumber, int i);
+	int getNumberOfZeroSalaryEmployees();
 
 public:
 	SystemManager(int k);
