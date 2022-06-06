@@ -53,7 +53,7 @@ int SystemManager::getNumberOfZeroSalaryEmployees()
 	return (number_of_employees - employeesTree->getNumberOfNodes());
 }
 
-void SystemManager::fillGradesArray(Employee** employees_arr, int grades[] , int size)
+/*void SystemManager::fillGradesArray(Employee** employees_arr, int grades[] , int size)
 {
 	for (int i = 0; i < size; i++) {
 		grades[i] = employees_arr[i]->getGrade();
@@ -109,7 +109,7 @@ void SystemManager::mergeCompaniesTrees(Company* acquirerCompany, Company* targe
 void SystemManager::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
 {
 	acquirerCompany->getEmployeesHashTable().mergeTwoHashies(acquirerCompany->getEmployeesHashTable(), targetCompany->getEmployeesHashTable());
-}
+}*/
 
 /*
 void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
@@ -127,8 +127,8 @@ void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* roo
 }
 */
 
-SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0),
-	companies(new InvertedTree<Company*> * [k]), employeesTable(new HashTable()), 
+SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0), 
+	sumOfGradesZeroSalary(0), companies(new InvertedTree * [k]), employeesTable(new HashTable()), 
 	employeesTree(new RankedAVL<Employee>())
 
 {
@@ -138,7 +138,7 @@ SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employee
 	* and its value is a pointer to company object- contain all the data of the company
 	*/
 	for (int i = 0; i < number_of_companies; i++) {
-		companies[i] = new InvertedTree<Company*>(i + 1, new Company(i + 1, i + 1));
+		companies[i] = new InvertedTree(i + 1, new Company(i + 1, i + 1));
 	}
 }
 
@@ -173,6 +173,7 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	}
 
 	getCompany(companyID)->incZeroSalaryEmployees(&employee);
+	sumOfGradesZeroSalary += grade;
 	number_of_employees++;
 
 	return SUCCESS;
@@ -190,6 +191,7 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	}
 	int salary = employee->getSalary();
 	int company_id = employee->getCompanyID();
+	int grade = employee->getGrade();
 	
 	// remove employee from the hash table and from the employees company hash table
 	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) && 
@@ -204,9 +206,10 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 		}
 	}
 	else {
+		sumOfGradesZeroSalary -= grade;
 		decZeroSalaryDataInCompany(employee, company_id);
 	}
-
+ 
 	number_of_employees--;
 	return SUCCESS;
 }
@@ -227,10 +230,10 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
 	updateCompanyIDForEmployees(targetID, acquirerID);
 
-	//companies[targetID - 1]->unionFun();
-
-	mergeCompaniesTrees(acquirerCompany, targetCompany);
-	mergeCompaniesHashies(acquirerCompany, targetCompany);
+	//union the two groups with updating the values
+	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor);
+	//mergeCompaniesTrees(acquirerCompany, targetCompany);
+	//mergeCompaniesHashies(acquirerCompany, targetCompany);
 
 	return SUCCESS;
 
@@ -252,6 +255,7 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	int old_salary = old_employee->getSalary();
 	int new_salary = old_salary + salaryIncrease;
 	int company_id = old_employee->getCompanyID();
+	int grade = old_employee->getGrade();
 	Employee new_employee(employeeID, new_salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
 
 	// update the salary in the employees hash table, and in the employees company hash table
@@ -272,6 +276,7 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// old salary was 0
 	else {
+		sumOfGradesZeroSalary -= grade;
 		decZeroSalaryDataInCompany(&new_employee, company_id);
 		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
 			return FAILURE;
@@ -293,8 +298,9 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 		return FAILURE;
 	}
 
+	int old_grade = old_employee->getGrade();
 	int salary = old_employee->getSalary();
-	int new_grade = old_employee->getGrade() + bumpGrade;
+	int new_grade = old_grade + bumpGrade;
 	int company_id = old_employee->getCompanyID();
 	Employee new_employee(employeeID, salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
 	
@@ -314,19 +320,24 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 				return FAILURE;
 			}
 		}
+		else {
+			sumOfGradesZeroSalary += (new_grade - old_grade);
+		}
 	}
 
 	return SUCCESS;
 }
 
-StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m, void* sumBumpGrade)
+StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m)
 {
-	if (!sumBumpGrade || companyID > number_of_companies || companyID < 0 || m <= 0) {
+	if (companyID > number_of_companies || companyID < 0 || m <= 0) {
 		return INVALID_INPUT;
 	}
 
+	int* sumBumpGrade = new int();
 	if (companyID > 0) {
 		if (getCompany(companyID)->getNumberOfEmployeesNonZero() < m) {
+			delete sumBumpGrade;
 			return FAILURE;
 		}
 		getCompany(companyID)->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
@@ -334,19 +345,22 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 
 	else {
 		if (employeesTree->getNumberOfNodes() < m) {
+			delete sumBumpGrade;
 			return FAILURE;
 		}
 		employeesTree->sumBumpGrade(m, (int*)sumBumpGrade);
 	}
 
+	printf("SumOfBumpGradeBetweenTopWorkersByGroup: %d\n", *sumBumpGrade);
+	delete sumBumpGrade;
 	return SUCCESS;
 }
 
 StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID, 
-	int lowerSalary, int higherSalary, void* averageBumpGrade)
+	int lowerSalary, int higherSalary)
 {
-	if (!averageBumpGrade || higherSalary < 0 || lowerSalary < 0 ||
-		lowerSalary > higherSalary || companyID < 0 || companyID > number_of_companies) {
+	if (higherSalary < 0 || lowerSalary < 0 || lowerSalary > higherSalary ||
+		companyID < 0 || companyID > number_of_companies) {
 		return INVALID_INPUT;
 	}
 
@@ -381,6 +395,7 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			employees_tree->calcSumOfGrades(base_root, lowNode, &lowSum);
 		}
 		if (lowerSalary == 0) {
+			lowSum += company->getSumOfGradesOfZeroSalaryEmployees();
 			lowRank += company->getNumOfZeroSalaryEmployees();
 		}
 	}
@@ -409,16 +424,28 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
 		}
 		if (lowerSalary == 0) {
+			lowSum += getSumOfGradeZeroSalary();
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-	double* average = 0;
-	*average = ((lowSum - highSum) / (lowRank - highRank));
-	averageBumpGrade = average;
+	double average = 0;
+	average = ((lowSum - highSum) / (lowRank - highRank));
+	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
 	return SUCCESS;
 }
 
-StatusType SystemManager::CompanyValue(int companyID, void* standing)
+StatusType SystemManager::CompanyValue(int companyID)
 {
-	return StatusType();
+	if (companyID > number_of_companies || companyID <= 0) {
+		return INVALID_INPUT;
+	}
+
+	InvertedTree* company_node = companies[companyID - 1];
+	InvertedTree* head = companies[companyID - 1]->find(company_node);
+
+	double result;
+	result = (double)(company_node->getData().getValue());
+	result += company_node->getAcquiredValue() + head->getAcquiredValue();
+	printf("CompanyValue: %.1f\n", result);
+	return SUCCESS;
 }

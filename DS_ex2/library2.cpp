@@ -37,22 +37,22 @@ StatusType PromoteEmployee(void* DS, int employeeID, int bumpGrade)
 	return ((SystemManager*)DS)->PromoteEmployee(employeeID, bumpGrade);
 }
 
-StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void* DS, int companyID, int m, void* sumBumpGrade)
+StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void* DS, int companyID, int m)
 {
 	if (DS == NULL) return INVALID_INPUT;
-	return ((SystemManager*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup(companyID, m, sumBumpGrade);
+	return ((SystemManager*)DS)->SumOfBumpGradeBetweenTopWorkersByGroup(companyID, m);
 }
 
-StatusType AverageBumpGradeBetweenSalaryByGroup(void* DS, int companyID, int lowerSalary, int higherSalary, void* averageBumpGrade)
+StatusType AverageBumpGradeBetweenSalaryByGroup(void* DS, int companyID, int lowerSalary, int higherSalary)
 {
 	if (DS == NULL) return INVALID_INPUT;
-	return ((SystemManager*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID, lowerSalary, higherSalary, averageBumpGrade);
+	return ((SystemManager*)DS)->AverageBumpGradeBetweenSalaryByGroup(companyID, lowerSalary, higherSalary);
 }
 
-StatusType CompanyValue(void* DS, int companyID, void* standing)
+StatusType CompanyValue(void* DS, int companyID)
 {
 	if (DS == NULL) return INVALID_INPUT;
-	return ((SystemManager*)DS)->CompanyValue(companyID, standing);
+	return ((SystemManager*)DS)->CompanyValue(companyID);
 }
 
 

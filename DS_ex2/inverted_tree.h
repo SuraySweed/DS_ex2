@@ -2,86 +2,180 @@
 #define INVERTTED_TREE_H_
 
 #include <iostream>
+#include "company.h"
+#include "ranked_avl_tree.h"
+#include "hash_table.h"
 
-/*
-template <class T>
-class InvertedTreeNode {
-private:
-	int key;
-	T data;
-	int size;
-	int acquired_value;
-	InvertedTreeNode* next;
-
-public:
-	InvertedTreeNode(int key, T data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
-	InvertedTreeNode(const InvertedTreeNode<T>& invertedTreeNode) = default;
-	InvertedTreeNode<T>& operator=(const InvertedTreeNode<T>&) = default;
-	~InvertedTreeNode() = default;
-
-	T getData() { return data; }
-};
-*/
-
-template <class T>
 class InvertedTree {
 private:
-	//InvertedTreeNode<T>* node;
 	int key;
-	T data;
+	Company* data;
 	int size;
-	int acquired_value;
+	double acquired_value;
 	InvertedTree* next;
 
+	void updatePath(InvertedTree* head, InvertedTree* node);
+	void updateAcquiredValue(InvertedTree* node);
 
 public:
-	InvertedTree(int key, T data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
-	InvertedTree(const InvertedTree<T>& invertedTree) = default;
-	InvertedTree<T>& operator=(const InvertedTree<T>& invertedTree) = default;
+	InvertedTree(int key, Company data) : key(key), data(new Company(data)), size(1), acquired_value(0), next(nullptr) {}
+	InvertedTree(const InvertedTree& invertedTree) = default;
+	InvertedTree& operator=(const InvertedTree& invertedTree) = default;
 	~InvertedTree();
 	
-	T getData() { return data; }
-	InvertedTree<T>* find(InvertedTree<T>* tree);
-	void unionFun(InvertedTree<T>* leaf, InvertedTree<T>* secondLeaf);
-	//InvertedTreeNode<T>* getRoot(InvertedTreeNode<T>* leaf);
+	Company getData() { return data; }
+	double getAcquiredValue() { return acquired_value; }
+	InvertedTree* find(InvertedTree* group);
+	void Union(InvertedTree* group1, InvertedTree* group2, double factor);
+	void fillGradesArray(Employee** employees_arr, int grades[], int size);
+	void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
+	void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
 };
 
-template<class T>
-inline InvertedTree<T>::~InvertedTree()
+inline void InvertedTree::updatePath(InvertedTree* head, InvertedTree* node)
 {
-	while (next) {
-		InvertedTree<T>* toDelete = next;
-		next = next->next;
-		delete toDelete;
-	}
-}
-
-template<class T>
-inline InvertedTree<T>* InvertedTree<T>::find(InvertedTree<T>* tree)
-{
-	InvertedTree<T>* head = tree;
-	while (head->next) {
-		head = head->next;
+	//InvertedTree* node = group;
+	if (head == node) {
+		return;
 	}
 
-	InvertedTree<T>* node = tree;
-	InvertedTree<T>* temp;
+	InvertedTree* temp;
 	while (node->next) {
 		temp = node->next;
 		node->next = head;
 		node = temp;
 	}
+}
+
+inline void InvertedTree::updateAcquiredValue(InvertedTree* node)
+{
+	if (node->next == nullptr) {
+		return;
+	}
+	updateAcquiredValue(node->next);
+	if (node->next->next == nullptr) {
+		return;
+	}
+	else {
+		node->acquired_value += node->next->acquired_value;
+	}
+}
+
+inline InvertedTree::~InvertedTree()
+{
+	while (next) {
+		InvertedTree* toDelete = next;
+		next = next->next;
+		delete toDelete;
+	}
+}
+
+inline InvertedTree* InvertedTree::find(InvertedTree* group)
+{
+	InvertedTree* head = group;
+	while (head->next) {
+		head = head->next;
+	}
+	
+	updateAcquiredValue(group);
+	updatePath(head, group);
+
 	return head;
 }
 
-template<class T>
-inline void InvertedTree<T>::unionFun(InvertedTree<T>* leaf, InvertedTree<T>* secondLeaf)
+inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, double factor)
 {
-	auto leaf1 = find(leaf);
-	auto leaf2 = find(secondLeaf);
-	leaf2->next = leaf1;
-	leaf1->size += leaf2->size;
-	leaf1->next = nullptr;
+	auto parent1 = find(group1);
+	auto parent2 = find(group2);
+
+	if (parent1 == parent2) {
+		return;
+	}
+
+	if (parent1->size > parent2->size) {
+		parent1->acquired_value += factor * (parent2->getData().getValue() + parent2->acquired_value);
+		parent2->acquired_value -= parent1->acquired_value;
+		parent2->next = parent1;
+		parent1->size += parent2->size;
+		parent1->data->setNumOfZeroSalaryEmployees(parent1->data->getNumOfZeroSalaryEmployees() +
+			parent2->data->getNumOfZeroSalaryEmployees());
+		parent1->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
+			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
+
+		mergeCompaniesTrees(parent1->getData(), parent2->getData());
+		mergeCompaniesHashies(parent1->getData(), parent2->getData());
+	}
+	else {
+		parent1->acquired_value += factor * (parent2->getData().getValue() + parent2->acquired_value);
+		parent1->acquired_value -= parent2->acquired_value;
+		parent1->next = parent2;
+		parent2->size += parent1->size;
+		parent2->data->setNumOfZeroSalaryEmployees(parent1->data->getNumOfZeroSalaryEmployees() +
+			parent2->data->getNumOfZeroSalaryEmployees());
+		parent2->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
+			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
+
+		mergeCompaniesTrees(parent2->getData(), parent1->getData());
+		mergeCompaniesHashies(parent2->getData(), parent1->getData());
+	}
+}
+
+inline void InvertedTree::fillGradesArray(Employee** employees_arr, int grades[], int size)
+{
+	for (int i = 0; i < size; i++) {
+		grades[i] = employees_arr[i]->getGrade();
+	}
+}
+
+inline void InvertedTree::mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany)
+{
+	int target_employees_number = targetCompany->getNumOfEmployeesInTree();
+	int* target_grades = new int[target_employees_number];
+	Employee** target_employees_arr = new Employee * [target_employees_number];
+	int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
+	int* acquirer_grades = new int[acquirer_employees_number];
+	Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
+
+	targetCompany->fillEmployeesInArray(target_employees_arr);
+	fillGradesArray(target_employees_arr, target_grades, target_employees_number);
+	acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
+	fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
+
+	int total_employees = target_employees_number + acquirer_employees_number;
+	int* total_grades = new int[total_employees];
+	Employee** total_employees_arr = new Employee * [total_employees];
+
+	Employee** target_fill_array = new Employee * [target_employees_number];
+	Employee** acquire_fill_array = new Employee * [acquirer_employees_number];
+
+	for (int i = 0; i < target_employees_number; i++) {
+		target_fill_array[i] = new Employee(*(target_employees_arr[i]));
+	}
+
+	for (int i = 0; i < acquirer_employees_number; i++) {
+		acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
+	}
+
+	acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
+		acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
+
+	delete targetCompany->getEmployeesTree();
+
+	for (int i = 0; i < target_employees_number; i++) {
+		delete target_fill_array[i];
+	}
+
+	for (int i = 0; i < acquirer_employees_number; i++) {
+		delete acquire_fill_array[i];
+	}
+
+	delete[] target_fill_array;
+	delete[] acquire_fill_array;
+}
+
+inline void InvertedTree::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
+{
+	acquirerCompany->getEmployeesHashTable().mergeTwoHashies(acquirerCompany->getEmployeesHashTable(), targetCompany->getEmployeesHashTable());
 }
 
 

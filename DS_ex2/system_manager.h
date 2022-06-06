@@ -14,8 +14,9 @@ private:
 
 	int number_of_companies; //k
 	int number_of_employees;
+	int sumOfGradesZeroSalary;
 
-	InvertedTree<Company*>** companies;
+	InvertedTree** companies;
 	HashTable* employeesTable;
 	RankedAVL<Employee>* employeesTree;
 
@@ -24,15 +25,12 @@ private:
 	void decZeroSalaryDataInCompany(Employee* employee, int company_id);
 	bool insertEmployeeToTreeAndCompany(Employee* employee, int company_id);
 	Company* getCompany(int company_id);
-	/*
-	void updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
-		, int targetEmployeesNumber, int i);
-	*/
 	void updateCompanyIDForEmployees(int targetID, int acquirerID);
 	int getNumberOfZeroSalaryEmployees();
-	void fillGradesArray(Employee** employees_arr, int grades[], int size);
-	void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
-	void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
+	int getSumOfGradeZeroSalary() { return sumOfGradesZeroSalary; }
+	//void fillGradesArray(Employee** employees_arr, int grades[], int size);
+	//void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
+	//void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
 
 public:
 	SystemManager(int k);
@@ -44,9 +42,9 @@ public:
 	StatusType AcquireCompany(int acquirerID, int targetID, double factor);
 	StatusType EmployeeSalaryIncrease(int employeeID, int salaryIncrease);
 	StatusType PromoteEmployee(int employeeID, int bumpGrade);
-	StatusType SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m, void* sumBumpGrade);
-	StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary, void* averageBumpGrade);
-	StatusType CompanyValue(int companyID, void* standing);
+	StatusType SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m);
+	StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary);
+	StatusType CompanyValue(int companyID);
 
 };
 
