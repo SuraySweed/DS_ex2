@@ -49,9 +49,9 @@ public:
 template<class T>
 inline InvertedTree<T>::~InvertedTree()
 {
-	while (node) {
-		InvertedTreeNode<T>* toDelete = node;
-		node = node->next;
+	while (next) {
+		InvertedTree<T>* toDelete = next;
+		next = next->next;
 		delete toDelete;
 	}
 }

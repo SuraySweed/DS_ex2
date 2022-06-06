@@ -30,9 +30,13 @@ public:
 
 	bool operator<(const Employee& other) const;
 	bool operator<(const int& other) const;
+	bool operator<=(const int& other) const;
 	bool operator>(const Employee& other) const;
 	bool operator>(const int& other) const;
+	bool operator>=(const int& other) const;
 	bool operator==(const Employee& other) const;
+	bool operator==(const int& other) const;
+	bool operator!=(const int& other) const;
 };
 
 #endif // EMPLOYEE_H

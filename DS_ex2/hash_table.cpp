@@ -4,7 +4,7 @@ HashTable::HashTable() : size(init_size), counter(0)
 {
 	employees = new LinkedList * [size];
 	for (int i = 0; i < size; i++) {
-		employees[i] = nullptr;
+		employees[i] = new LinkedList();
 	}
 }
 
@@ -23,18 +23,36 @@ void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_
 {
 	size = new_size;
 	LinkedList** new_employees_arr = new LinkedList * [new_size];
-	LinkedList* employeesInBlock = new LinkedList();
+	for (int i = 0; i < size; i++)
+	{
+		new_employees_arr[i] = new LinkedList();
+	}
+
+	//LinkedList* employeesInBlock = new LinkedList();
 
 	int count = 0;
 	for (int i = 0; i < old_size; i++) {
 		if (old_employees_array[i]) {
-			employeesInBlock = old_employees_array[i];
+			Node* currentNode = old_employees_array[i]->getHead();
+			while (currentNode) {
+				//employeesInBlock->insert(*(currentNode->data));
+				new_employees_arr[i]->insert(*(currentNode->data));
+				count++;
+				currentNode->data = nullptr;
+				currentNode = currentNode->next;
+			}
+			delete old_employees_array[i];
 		}
-		count = employeesInBlock->getSize();
-		delete old_employees_array[i];
 	}
 	delete[] old_employees_array;
 
+	/*
+	for (int i = 0; i < size; i++)
+	{
+		new_employees_arr[i] = nullptr;
+	}
+	*/
+	/*
 	Node* head = employeesInBlock->getHead();
 	for (int i = 0; i < count; i++) {
 		Employee* currentEmployee = head->data;
@@ -46,7 +64,8 @@ void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_
 		new_employees_arr[index]->insert(*currentEmployee);
 		head = head->next;
 	}
-	delete employeesInBlock;
+	*/
+	//delete employeesInBlock;
 	employees = new_employees_arr;
 
 }
@@ -59,7 +78,11 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
-	return ((employees[index]->find(employee_id))->data); // find in linkedlist
+	if (employees[index]->find(employee_id)) {
+		Employee* sa = employees[index]->find(employee_id)->data;
+		return ((employees[index]->find(employee_id))->data); // find in linkedlist
+	}
+	return nullptr;
 }
 
 HashTableStatus HashTable::insert(Employee& employee)
@@ -86,7 +109,7 @@ HashTableStatus HashTable::insert(Employee& employee)
 HashTableStatus HashTable::remove(Employee& employee)
 {
 	if (counter == size / 4) {
-		resize(0.5 * size, employees, size);
+		resize((int)(0.5 * size), employees, size);
 	}
 
 	int index = HashFunction(employee.getID());
@@ -96,7 +119,7 @@ HashTableStatus HashTable::remove(Employee& employee)
 	
 	employees[index]->remove(employee.getID());
 	if (!employees[index]->getHead()) {
-		delete employee[index]; //delete linkedlist
+		delete employees[index]; //delete linkedlist
 		employees[index] = nullptr;
 	}
 	counter--;

@@ -28,7 +28,7 @@ void SystemManager::decZeroSalaryDataInCompany(Employee* employee, int company_i
 
 bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int company_id)
 {
-	if (!employeesTree->insert(employee, employee->getGrade()) &&
+	if (!employeesTree->insert(employee, employee->getGrade()) ||
 		!getCompany(company_id)->addEmployee(employee))
 	{
 		return false;
@@ -166,7 +166,7 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	*company_id = companyID;
 	Employee employee(employeeID, 0, grade, company_id);
 	
-	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) &&
+	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) ||
 		!(getCompany(companyID)->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
@@ -370,7 +370,7 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		
 		if (higherSalary != 0) {
 			if (lowerSalary == 0) {
-				lowSalary = employees_tree->getMinNodeData()->getSalary();
+				lowSalary = employees_tree->getMinNodeData(base_root)->getSalary();
 			}
 			TreeNode<Employee>* highNode = employees_tree->getLastInInterval(base_root, higherSalary);
 			TreeNode<Employee>* lowNode = employees_tree->getFirstInInterval(base_root, lowSalary);
@@ -412,8 +412,13 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-	double* average;
+	double* average = 0;
 	*average = ((lowSum - highSum) / (lowRank - highRank));
 	averageBumpGrade = average;
 	return SUCCESS;
+}
+
+StatusType SystemManager::CompanyValue(int companyID, void* standing)
+{
+	return StatusType();
 }

@@ -84,7 +84,7 @@ void LinkedList::insert(const Employee& employee)
         while (currentNode) {
             currentNode = currentNode->next;
         }
-        currentNode->next = node_to_add;
+        currentNode = node_to_add;
         node_to_add->next = nullptr;
     }
     size++;
@@ -117,14 +117,15 @@ void LinkedList::remove(const int id)
 
 Node* LinkedList::find(const int id)
 {
-    Node* currentNode = head;
-    while (currentNode) {
-        if (currentNode->data->getID() == id) {
-            return currentNode;
+    if (head) {
+        Node* currentNode = head;
+        while (currentNode) {
+            if (currentNode->data->getID() == id) {
+                return currentNode;
+            }
+            currentNode = currentNode->next;
         }
-        currentNode = currentNode->next;
     }
-
     return nullptr;
 }
 

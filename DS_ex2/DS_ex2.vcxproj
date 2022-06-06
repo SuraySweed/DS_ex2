@@ -144,7 +144,10 @@
     <ClCompile Include="hash_table.cpp" />
     <ClCompile Include="library2.cpp" />
     <ClCompile Include="linked_list.cpp" />
-    <ClCompile Include="main2.cpp" />
+    <ClCompile Include="main2.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4996</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="system_manager.cpp" />
   </ItemGroup>
   <ItemGroup>

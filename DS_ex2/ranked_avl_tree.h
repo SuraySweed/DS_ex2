@@ -507,17 +507,17 @@ inline T* RankedAVL<T>::getMaxNodeData(TreeNode<T>* root)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 {
-	if (root && (root->data == high) && (root->right->data != high)) {
+	if (root && (*(root->data) == high) && (*(root->right->data) != high)) {
 		return root;
 	}
 
-	else if (root && (root->data > high)) {
+	else if (root && (*(root->data) > high)) {
 		//if (!(root->left)) return root;
 		return getLastInInterval(root->left, high);
 	}
 	
-	else if (root && (root->data <= high)) {
-		if (!(root->right) || (root->right->data > high && (!(root->right->left) || root->right->left->data > high)))
+	else if (root && (*(root->data) <= high)) {
+		if (!(root->right) || (*(root->right->data) > high && (!(root->right->left) || *(root->right->left->data) > high)))
 			return root;
 		return getLastInInterval(root->right, high);
 	}
@@ -527,16 +527,16 @@ inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getFirstInInterval(TreeNode<T>* root, int low)
 {
-	if (root && (root->data == low) && (root->left->data != low)) {
+	if (root && (*(root->data) == low) && (*(root->left->data) != low)) {
 		return root;
 	} 
 
-	else if (root && (root->data < low)) {
+	else if (root && (*(root->data) < low)) {
 		return getFirstInInterval(root->right, low);
 	} 
 
-	else if (root && (root->data >= low)) {
-		if (!(root->left) || (root->left->data < low && (!root->left->right || root->left->right->data < low)))
+	else if (root && (*(root->data) >= low)) {
+		if (!(root->left) || (*(root->left->data) < low && (!root->left->right || *(root->left->right->data) < low)))
 			return root;
 		return getFirstInInterval(root->left, low);
 	}
@@ -546,11 +546,11 @@ inline TreeNode<T>* RankedAVL<T>::getFirstInInterval(TreeNode<T>* root, int low)
 template<class T>
 inline void RankedAVL<T>::calcRank(TreeNode<T>* root, TreeNode<T>* node, int* rank)
 {
-	if (root->data == node->data) {
+	if (*(root->data) == *(node->data)) {
 		*rank += node->rank;
 		return;
 	}
-	else if (root->data > node->data) {
+	else if (*(root->data) > *(node->data)) {
 		*rank += root->rank;
 		calcRank(root->left, node, rank);
 	}
@@ -562,11 +562,11 @@ inline void RankedAVL<T>::calcRank(TreeNode<T>* root, TreeNode<T>* node, int* ra
 template<class T>
 inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, int* sum)
 {
-	if (root->data == node->data) {
+	if (*(root->data) == *(node->data)) {
 		*sum += node->sumOfGrades;
 		return;
 	}
-	else if (root->data > node->data) {
+	else if (*(root->data) > *(node->data)) {
 		*sum += root->sumOfGrades;
 		calcRank(root->left, node, sum);
 	}
