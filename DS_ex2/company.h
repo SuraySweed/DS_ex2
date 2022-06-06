@@ -17,6 +17,7 @@ private:
 
 public:
 	Company(int id, int value);
+	Company(Company* company);
 	Company(const Company& company) = default;
 	Company& operator=(const Company&) = default;
 	~Company() = default;

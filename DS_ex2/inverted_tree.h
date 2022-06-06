@@ -18,12 +18,12 @@ private:
 	void updateAcquiredValue(InvertedTree* node);
 
 public:
-	InvertedTree(int key, Company data) : key(key), data(new Company(data)), size(1), acquired_value(0), next(nullptr) {}
+	InvertedTree(int key, Company* data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
 	InvertedTree(const InvertedTree& invertedTree) = default;
 	InvertedTree& operator=(const InvertedTree& invertedTree) = default;
 	~InvertedTree();
 	
-	Company getData() { return data; }
+	Company* getData() { return data; }
 	double getAcquiredValue() { return acquired_value; }
 	InvertedTree* find(InvertedTree* group);
 	void Union(InvertedTree* group1, InvertedTree* group2, double factor);
@@ -93,7 +93,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 	}
 
 	if (parent1->size > parent2->size) {
-		parent1->acquired_value += factor * (parent2->getData().getValue() + parent2->acquired_value);
+		parent1->acquired_value += factor * (parent2->getData()->getValue() + parent2->acquired_value);
 		parent2->acquired_value -= parent1->acquired_value;
 		parent2->next = parent1;
 		parent1->size += parent2->size;
@@ -106,7 +106,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		mergeCompaniesHashies(parent1->getData(), parent2->getData());
 	}
 	else {
-		parent1->acquired_value += factor * (parent2->getData().getValue() + parent2->acquired_value);
+		parent1->acquired_value += factor * (parent2->getData()->getValue() + parent2->acquired_value);
 		parent1->acquired_value -= parent2->acquired_value;
 		parent1->next = parent2;
 		parent2->size += parent1->size;

@@ -8,6 +8,21 @@ HashTable::HashTable() : size(init_size), counter(0)
 	}
 }
 
+HashTable::HashTable(const HashTable& hash_table) : size(hash_table.size), counter(hash_table.counter)
+{
+	this->employees = new LinkedList * [size];
+	for (int i = 0; i < size; i++) {
+		this->employees[i] = new LinkedList();
+	}
+	for (int i = 0; i < size; i++) {
+		Node* currentNode = (hash_table.employees)[i]->getHead();
+		for (int listIndex = 0; listIndex < (hash_table.employees)[i]->getSize() && currentNode; listIndex++) {
+			this->insert(*(currentNode->data));
+			currentNode = currentNode->next;
+		}
+	}
+}
+
 HashTable::~HashTable()
 {
 	for (int i = 0; i < size; i++) {
@@ -78,6 +93,7 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
+	Node* employee = employees[index]->find(employee_id);
 	if (employees[index]->find(employee_id)) {
 		Employee* sa = employees[index]->find(employee_id)->data;
 		return ((employees[index]->find(employee_id))->data); // find in linkedlist

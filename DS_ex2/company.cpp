@@ -4,6 +4,20 @@ Company::Company(int companyID, int companyValue) : id(companyID), value(company
 	num_of_employees_with_zero_salary(0), sum_of_grades_of_zero_salary_employees(0), 
 	employees(RankedAVL<Employee>()), all_employees_table(HashTable()) {}
 
+Company::Company(Company* company) : id(company->getCompanyID()), value(company->getValue()),
+	num_of_employees_with_zero_salary(company->getNumOfZeroSalaryEmployees()),
+	sum_of_grades_of_zero_salary_employees(company->getSumOfGradesOfZeroSalaryEmployees()),
+	employees(RankedAVL<Employee>(*(company->getEmployeesTree()))),
+	all_employees_table(HashTable(company->getEmployeesHashTable())) {}
+
+/*
+Company::Company(const Company& company) : id(company.getCompanyID()), value(company.getValue()),
+num_of_employees_with_zero_salary(company.getNumOfZeroSalaryEmployees()),
+sum_of_grades_of_zero_salary_employees(company.getSumOfGradesOfZeroSalaryEmployees()),
+employees(RankedAVL<Employee>((company.getEmployeesTree())),
+	all_employees_table(HashTable(company.getEmployeesHashTable())) {}
+*/
+
 bool Company::addEmployee(Employee* employee)
 {
 	if (employees.insert(employee, employee->getGrade())) {

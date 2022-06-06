@@ -17,11 +17,11 @@ private:
 	int size;
 	int counter;
 	LinkedList** employees; //pointer to array of LinkedList, the value of every index of the array is a linked list of employees 
-	static const int init_size = 12;
+	static const int init_size = 256;
 
 public:
 	HashTable();
-	HashTable (const HashTable& hash_table) = default;
+	HashTable (const HashTable& hash_table);
 	HashTable& operator=(const HashTable& node) = default;
 	~HashTable();
 

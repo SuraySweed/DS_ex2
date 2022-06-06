@@ -6,6 +6,7 @@
 
 class Node {
 public:
+	//Node() : data(new Employee()), next(nullptr) {}
 	Node(const Employee& employee);
 	Node(const Node& node);
 	Node& operator=(const Node& node);

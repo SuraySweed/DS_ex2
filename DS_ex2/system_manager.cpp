@@ -42,6 +42,11 @@ Company* SystemManager::getCompany(int company_id)
 	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
 }
 
+InvertedTree* SystemManager::getInvertedTreeCompany(int company_id)
+{
+	return (companies[company_id - 1]->find(companies[company_id - 1]));
+}
+
 void SystemManager::updateCompanyIDForEmployees(int targetID, int acquirerID)
 {
 	Company* target_company = getCompany(targetID);
@@ -221,8 +226,8 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 		return INVALID_INPUT;
 	}
 
-	Company* acquirerCompany = getCompany(acquirerID);
-	Company* targetCompany = getCompany(targetID);
+	InvertedTree* acquirerCompany = getInvertedTreeCompany(acquirerID);
+	InvertedTree* targetCompany = getInvertedTreeCompany(targetID);
 
 	// acquirerCompany already bought the targetCompany
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
@@ -391,8 +396,11 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 			employees_tree->calcRank(base_root, highNode, &highRank);
 			employees_tree->calcRank(base_root, lowNode, &lowRank);
+			lowRank += 1;
 			employees_tree->calcSumOfGrades(base_root, highNode, &highSum);
 			employees_tree->calcSumOfGrades(base_root, lowNode, &lowSum);
+			lowSum += lowNode->Grade;
+
 		}
 		if (lowerSalary == 0) {
 			lowSum += company->getSumOfGradesOfZeroSalaryEmployees();
@@ -429,6 +437,7 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		}
 	}
 	double average = 0;
+	// !!!!! devide by 0 !!!!! check this state
 	average = ((lowSum - highSum) / (lowRank - highRank));
 	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
 	return SUCCESS;
@@ -444,7 +453,7 @@ StatusType SystemManager::CompanyValue(int companyID)
 	InvertedTree* head = companies[companyID - 1]->find(company_node);
 
 	double result;
-	result = (double)(company_node->getData().getValue());
+	result = (double)(company_node->getData()->getValue());
 	result += company_node->getAcquiredValue() + head->getAcquiredValue();
 	printf("CompanyValue: %.1f\n", result);
 	return SUCCESS;

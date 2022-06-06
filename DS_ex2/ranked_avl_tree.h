@@ -507,7 +507,7 @@ inline T* RankedAVL<T>::getMaxNodeData(TreeNode<T>* root)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 {
-	if (root && (*(root->data) == high) && (*(root->right->data) != high)) {
+	if (root && (*(root->data) == high) && (root->right && (*(root->right->data) != high))) {
 		return root;
 	}
 
@@ -527,7 +527,7 @@ inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getFirstInInterval(TreeNode<T>* root, int low)
 {
-	if (root && (*(root->data) == low) && (*(root->left->data) != low)) {
+	if (root && (*(root->data) == low) && (root->left && (*(root->left->data) != low))) {
 		return root;
 	} 
 
@@ -547,6 +547,7 @@ template<class T>
 inline void RankedAVL<T>::calcRank(TreeNode<T>* root, TreeNode<T>* node, int* rank)
 {
 	if (*(root->data) == *(node->data)) {
+		//*rank += 1;
 		*rank += node->rank;
 		return;
 	}
@@ -563,11 +564,13 @@ template<class T>
 inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, int* sum)
 {
 	if (*(root->data) == *(node->data)) {
+		//*sum += root->Grade;
 		*sum += node->sumOfGrades;
 		return;
 	}
 	else if (*(root->data) > *(node->data)) {
 		*sum += root->sumOfGrades;
+		//if (!root->left) *sum += root->Grade;
 		calcRank(root->left, node, sum);
 	}
 	else {

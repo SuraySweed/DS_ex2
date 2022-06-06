@@ -25,6 +25,7 @@ private:
 	void decZeroSalaryDataInCompany(Employee* employee, int company_id);
 	bool insertEmployeeToTreeAndCompany(Employee* employee, int company_id);
 	Company* getCompany(int company_id);
+	InvertedTree* getInvertedTreeCompany(int company_id);
 	void updateCompanyIDForEmployees(int targetID, int acquirerID);
 	int getNumberOfZeroSalaryEmployees();
 	int getSumOfGradeZeroSalary() { return sumOfGradesZeroSalary; }

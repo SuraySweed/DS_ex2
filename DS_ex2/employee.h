@@ -13,6 +13,7 @@ private:
 	std::shared_ptr<int> company_id;
 
 public:
+	Employee() : id(0), salary(0), grade(0), company_id(std::move(nullptr)) {}
 	Employee(int employeeID, int employeeSalary, int employeeGrade, std::shared_ptr<int> comapnyID);
 	Employee(const Employee& employeeIdData) = default;
 	Employee& operator=(Employee&) = default;
