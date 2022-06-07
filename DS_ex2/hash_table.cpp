@@ -28,6 +28,7 @@ HashTable::~HashTable()
 	for (int i = 0; i < size; i++) {
 		if (employees[i]) {
 			delete employees[i];
+			size--;
 		}
 	}
 	delete[] employees;
@@ -160,6 +161,17 @@ void HashTable::mergeTwoHashies(HashTable acquirer, HashTable target)
 			currentNode = currentNode->next;
 		}
 	}
+}
+
+void HashTable::deleteEmployees()
+{
+	for (int i = 0; i < size; i++) {
+		if (employees[i]) {
+			delete employees[i];
+		}
+		size--;
+	}
+	delete[] employees;
 }
 
 /*

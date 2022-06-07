@@ -90,6 +90,18 @@ void Company::updateGradeForEmployee(int employeeID, int new_grade)
 	all_employees_table.find(employeeID)->setGrade(new_grade);
 }
 
+void Company::deleteEmployeeFromTree()
+{
+	employees.deleteNodes(employees.getRoot());
+	num_of_employees_with_zero_salary = 0;
+	sum_of_grades_of_zero_salary_employees = 0;
+}
+
+void Company::deleteEmployeesFromHashTable()
+{
+	all_employees_table.deleteEmployees();
+}
+
 bool Company::operator<(const Company& other) const
 {
 	return (this->id < other.id);

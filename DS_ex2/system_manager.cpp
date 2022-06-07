@@ -381,14 +381,15 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		RankedAVL<Employee>* employees_tree = company->getEmployeesTree();
 		TreeNode<Employee>* base_root = employees_tree->getRoot();
 
-		if (lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary() || 
-			((higherSalary != 0) && higherSalary < employees_tree->getMinNodeData(base_root)->getSalary()) ||
+		if (employees_tree->getMaxNodeData(base_root) && (lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary()) ||
+			((higherSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
+			higherSalary < employees_tree->getMinNodeData(base_root)->getSalary())) ||
 			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0)) {
 			return FAILURE;
 		}
 		
 		if (higherSalary != 0) {
-			if (lowerSalary == 0) {
+			if (lowerSalary == 0 && employees_tree->getMinNodeData(base_root)) {
 				lowSalary = employees_tree->getMinNodeData(base_root)->getSalary();
 			}
 			TreeNode<Employee>* highNode = employees_tree->getLastInInterval(base_root, higherSalary);
@@ -412,14 +413,15 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 		TreeNode<Employee>* base_root = employeesTree->getRoot();
 
-		if (lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary() ||
-			((higherSalary != 0) && higherSalary < employeesTree->getMinNodeData(base_root)->getSalary()) ||
+		if (employeesTree->getMaxNodeData(base_root) && (lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary()) ||
+			((higherSalary != 0) && employeesTree->getMinNodeData(base_root) && 
+			(higherSalary < employeesTree->getMinNodeData(base_root)->getSalary())) ||
 			(higherSalary == 0 && getNumberOfZeroSalaryEmployees() == 0)) {
 			return FAILURE;
 		}
 
 		if (higherSalary != 0) {
-			if (lowerSalary == 0) {
+			if (lowerSalary == 0 && employeesTree->getMinNodeData(base_root)) {
 				lowSalary = employeesTree->getMinNodeData(base_root)->getSalary();
 			}
 			

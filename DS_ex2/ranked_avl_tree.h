@@ -71,6 +71,7 @@ public:
 	TreeNode<T>* getFirstInInterval(TreeNode<T>* root, int low);
 	void calcRank(TreeNode<T>* root, TreeNode<T>* node, int* rank);
 	void calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, int* sum);
+	void deleteNodes(TreeNode<T>* root);
 };
 
 template<class T>
@@ -491,7 +492,8 @@ inline T* RankedAVL<T>::getMinNodeData(TreeNode<T>* root)
 	while (root && root->left) {
 		root = root->left;
 	}
-	return root->data;
+	if (root) return root->data;
+	return nullptr;
 }
 
 template<class T>
@@ -500,8 +502,8 @@ inline T* RankedAVL<T>::getMaxNodeData(TreeNode<T>* root)
 	while (root && root->right) {
 		root = root->right;
 	}
-	return root->data;
-
+	if (root) return root->data;
+	return nullptr;
 }
 
 template<class T>
@@ -672,6 +674,12 @@ inline RankedAVL<T>::RankedAVL(const RankedAVL<T>& rankedTree)
 {
 	_root = copyNodes(rankedTree._root);
 	this->NodesNumber = rankedTree.NodesNumber;
+}
+
+template<class T>
+inline void RankedAVL<T>::deleteNodes(TreeNode<T>* root)
+{
+	deleteTree(this->_root);
 }
 
 #endif // RANKED_AVL_TREE_H_

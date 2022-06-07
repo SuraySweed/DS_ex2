@@ -44,6 +44,8 @@ public:
 	void updateEmployeesCompanyID(int acquirerID);
 	void updateSalaryToEmployee(int employeeID, int new_salary);
 	void updateGradeForEmployee(int employeeID, int new_grade);
+	void deleteEmployeeFromTree();
+	void deleteEmployeesFromHashTable();
 
 	bool operator<(const Company& other) const;
 	bool operator>(const Company& other) const;

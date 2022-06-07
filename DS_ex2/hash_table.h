@@ -35,6 +35,7 @@ public:
 	int getCounter() { return counter; }
 	void updateEmployeesCompanyID(int acquirerID);
 	void mergeTwoHashies(HashTable acquirer, HashTable target);
+	void deleteEmployees();
 };
 
 #endif //HASH_TABLE_H
