@@ -27,11 +27,13 @@ public:
 	int getNumOfZeroSalaryEmployees() { return num_of_employees_with_zero_salary; }
 	int getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
 	int getNumberOfEmployeesNonZero() { return employees.getNumberOfNodes(); }
-	HashTable getEmployeesHashTable() { return all_employees_table; }
+	HashTable* getEmployeesHashTable() { return &all_employees_table; }
 	RankedAVL<Employee>* getEmployeesTree() { return &employees; }
 	int getNumOfEmployeesInTree() { return employees.getNumberOfNodes(); }
+	int getNumberOfEmployees() { return all_employees_table.getCounter(); }
 	void setNumOfZeroSalaryEmployees(int num) { num_of_employees_with_zero_salary = num; }
 	void setSumOfGradeZeroSalary(int sum) { sum_of_grades_of_zero_salary_employees = sum; }
+	void setEmployeesTree(RankedAVL<Employee>& other);
 	void fillEmployeesInArray(Employee** arr) { employees.fillArray(arr); }
 
 	bool addEmployee(Employee* employee);

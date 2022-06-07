@@ -8,7 +8,7 @@ Company::Company(Company* company) : id(company->getCompanyID()), value(company-
 	num_of_employees_with_zero_salary(company->getNumOfZeroSalaryEmployees()),
 	sum_of_grades_of_zero_salary_employees(company->getSumOfGradesOfZeroSalaryEmployees()),
 	employees(RankedAVL<Employee>(*(company->getEmployeesTree()))),
-	all_employees_table(HashTable(company->getEmployeesHashTable())) {}
+	all_employees_table(HashTable(*(company->getEmployeesHashTable()))) {}
 
 /*
 Company::Company(const Company& company) : id(company.getCompanyID()), value(company.getValue()),
@@ -17,6 +17,11 @@ sum_of_grades_of_zero_salary_employees(company.getSumOfGradesOfZeroSalaryEmploye
 employees(RankedAVL<Employee>((company.getEmployeesTree())),
 	all_employees_table(HashTable(company.getEmployeesHashTable())) {}
 */
+
+void Company::setEmployeesTree(RankedAVL<Employee>& other)
+{
+	employees = other;
+}
 
 bool Company::addEmployee(Employee* employee)
 {

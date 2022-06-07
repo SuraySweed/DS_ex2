@@ -33,8 +33,9 @@ public:
 	HashTableStatus remove(Employee& employee);
 	//Employee*& operator[](int index);
 	int getCounter() { return counter; }
+	int getSize() { return size; }
 	void updateEmployeesCompanyID(int acquirerID);
-	void mergeTwoHashies(HashTable acquirer, HashTable target);
+	void mergeTwoHashies(HashTable* acquirer, HashTable* target);
 	void deleteEmployees();
 };
 

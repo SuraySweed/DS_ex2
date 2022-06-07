@@ -53,8 +53,9 @@ extern "C" {
             "SumOfBumpGradeBetweenTopWorkersByGroup ",
             "AverageBumpGradeBetweenSalaryByGroup ",
             "CompanyValue",
-            //"BumpGradeToEmployees",
             "Quit"
+            //"BumpGradeToEmployees",
+            //"Quit"
     };
 
     static const char* ReturnValToStr(int val) {

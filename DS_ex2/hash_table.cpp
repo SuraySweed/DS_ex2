@@ -96,7 +96,7 @@ Employee* HashTable::find(int employee_id)
 	int index = HashFunction(employee_id);
 	Node* employee = employees[index]->find(employee_id);
 	if (employees[index]->find(employee_id)) {
-		Employee* sa = employees[index]->find(employee_id)->data;
+		//Employee* sa = employees[index]->find(employee_id)->data;
 		return ((employees[index]->find(employee_id))->data); // find in linkedlist
 	}
 	return nullptr;
@@ -150,15 +150,19 @@ void HashTable::updateEmployeesCompanyID(int acquirerID)
 	}
 }
 
-void HashTable::mergeTwoHashies(HashTable acquirer, HashTable target)
+void HashTable::mergeTwoHashies(HashTable* acquirer, HashTable* target)
 {
-	int target_size = target.getCounter();
+	int target_size = target->getSize();
 	for (int i = 0; i < target_size; i++) {
-		Node* currentNode = (target.employees)[i]->getHead();
-		for (int listIndex = 0; listIndex < (target.employees)[i]->getSize() && currentNode; listIndex++) {
-			acquirer.insert(*(currentNode->data));
-			target.remove(*(currentNode->data)); // check that
-			currentNode = currentNode->next;
+		Node* currentNode = (target->employees)[i]->getHead();
+		//for (int listIndex = 0; /*listIndex < (target.employees)[i]->getSize() && */currentNode; listIndex++) {
+		while(currentNode) {
+			acquirer->insert(*(currentNode->data));
+			//target.remove(*(currentNode->data)); // check that
+			//currentNode = currentNode->next;
+			Node* temp = currentNode->next;
+			target->remove(*(currentNode->data));
+			currentNode = temp;
 		}
 	}
 }

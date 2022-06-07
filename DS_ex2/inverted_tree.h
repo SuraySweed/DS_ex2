@@ -102,8 +102,12 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		parent1->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
 
-		mergeCompaniesTrees(parent1->getData(), parent2->getData());
-		mergeCompaniesHashies(parent1->getData(), parent2->getData());
+		if (parent2->getData()->getNumberOfEmployees() > 0) {
+			if (parent2->getData()->getNumOfEmployeesInTree() > 0) {
+				mergeCompaniesTrees(parent1->getData(), parent2->getData());
+			}
+			mergeCompaniesHashies(parent1->getData(), parent2->getData());
+		}
 	}
 	else {
 		parent1->acquired_value += factor * (parent2->getData()->getValue() + parent2->acquired_value);
@@ -115,8 +119,12 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		parent2->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
 
-		mergeCompaniesTrees(parent2->getData(), parent1->getData());
-		mergeCompaniesHashies(parent2->getData(), parent1->getData());
+		if (parent1->getData()->getNumberOfEmployees() > 0) {
+			if (parent1->getData()->getNumOfEmployeesInTree() > 0) {
+				mergeCompaniesTrees(parent2->getData(), parent1->getData());
+			}
+			mergeCompaniesHashies(parent2->getData(), parent1->getData());
+		}
 	}
 }
 
@@ -129,54 +137,61 @@ inline void InvertedTree::fillGradesArray(Employee** employees_arr, int grades[]
 
 inline void InvertedTree::mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany)
 {
-	int target_employees_number = targetCompany->getNumOfEmployeesInTree();
-	int* target_grades = new int[target_employees_number];
-	Employee** target_employees_arr = new Employee * [target_employees_number];
-	int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
-	int* acquirer_grades = new int[acquirer_employees_number];
-	Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
-
-	targetCompany->fillEmployeesInArray(target_employees_arr);
-	fillGradesArray(target_employees_arr, target_grades, target_employees_number);
-	acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
-	fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
-
-	int total_employees = target_employees_number + acquirer_employees_number;
-	int* total_grades = new int[total_employees];
-	Employee** total_employees_arr = new Employee * [total_employees];
-
-	Employee** target_fill_array = new Employee * [target_employees_number];
-	Employee** acquire_fill_array = new Employee * [acquirer_employees_number];
-
-	for (int i = 0; i < target_employees_number; i++) {
-		target_fill_array[i] = new Employee(*(target_employees_arr[i]));
+	if (acquirerCompany->getNumOfEmployeesInTree() == 0) {
+		acquirerCompany->setEmployeesTree(*(targetCompany->getEmployeesTree()));
 	}
 
-	for (int i = 0; i < acquirer_employees_number; i++) {
-		acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
+	else {
+		int target_employees_number = targetCompany->getNumOfEmployeesInTree();
+		int* target_grades = new int[target_employees_number];
+		Employee** target_employees_arr = new Employee * [target_employees_number];
+		int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
+		int* acquirer_grades = new int[acquirer_employees_number];
+		Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
+
+		targetCompany->fillEmployeesInArray(target_employees_arr);
+		fillGradesArray(target_employees_arr, target_grades, target_employees_number);
+		acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
+		fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
+
+		int total_employees = target_employees_number + acquirer_employees_number;
+		int* total_grades = new int[total_employees];
+		Employee** total_employees_arr = new Employee * [total_employees];
+
+		Employee** target_fill_array = new Employee * [target_employees_number];
+		Employee** acquire_fill_array = new Employee * [acquirer_employees_number];
+
+		for (int i = 0; i < target_employees_number; i++) {
+			target_fill_array[i] = new Employee(*(target_employees_arr[i]));
+		}
+
+		for (int i = 0; i < acquirer_employees_number; i++) {
+			acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
+		}
+
+		acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
+			acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
+
+		//delete targetCompany->getEmployeesTree();
+		targetCompany->deleteEmployeeFromTree();
+
+		for (int i = 0; i < target_employees_number; i++) {
+			delete target_fill_array[i];
+		}
+
+		for (int i = 0; i < acquirer_employees_number; i++) {
+			delete acquire_fill_array[i];
+		}
+
+		delete[] target_fill_array;
+		delete[] acquire_fill_array;
 	}
-
-	acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
-		acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
-
-	//delete targetCompany->getEmployeesTree();
-	targetCompany->deleteEmployeeFromTree();
-
-	for (int i = 0; i < target_employees_number; i++) {
-		delete target_fill_array[i];
-	}
-
-	for (int i = 0; i < acquirer_employees_number; i++) {
-		delete acquire_fill_array[i];
-	}
-
-	delete[] target_fill_array;
-	delete[] acquire_fill_array;
 }
 
 inline void InvertedTree::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
 {
-	acquirerCompany->getEmployeesHashTable().mergeTwoHashies(acquirerCompany->getEmployeesHashTable(), targetCompany->getEmployeesHashTable());
+	acquirerCompany->getEmployeesHashTable()->mergeTwoHashies(acquirerCompany->getEmployeesHashTable(),
+		targetCompany->getEmployeesHashTable());
 }
 
 
