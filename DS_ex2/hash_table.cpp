@@ -136,13 +136,8 @@ HashTableStatus HashTable::insert(Employee& employee)
 	int index = HashFunction(employee.getID());
 	
 	if (employees[index] && find(employee.getID())) {
-		return HASH_TABLE_EMPLOYEE_ALREADY_EXISTS; 
+		return HASH_TABLE_EMPLOYEE_ALREADY_EXISTS;
 	}
-
-	if (!employees[index]) {
-		employees[index] = new LinkedList();
-	}
-	
 	employees[index]->insert(employee);
 	counter++;
 	return HASH_TABLE_SUCCESS;
@@ -161,8 +156,8 @@ HashTableStatus HashTable::remove(Employee& employee)
 	
 	employees[index]->remove(employee.getID());
 	if (!employees[index]->getHead()) {
-		delete employees[index]; //delete linkedlist
-		employees[index] = nullptr;
+		//delete employees[index]; //delete linkedlist
+		//employees[index] = nullptr;
 	}
 	counter--;
 	return HASH_TABLE_SUCCESS;

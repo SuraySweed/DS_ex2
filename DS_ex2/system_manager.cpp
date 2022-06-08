@@ -191,6 +191,7 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	}
 
 	Employee* employee = employeesTable->find(employeeID);
+	Employee employeeCopy(employeeID, employee->getSalary(), employee->getGrade(), employee->getCompanyIDPtr());
 	if (!employee) {
 		return FAILURE;
 	}
@@ -199,20 +200,20 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	int grade = employee->getGrade();
 	
 	// remove employee from the hash table and from the employees company hash table
-	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) && 
-		!getCompany(company_id)->removeEmployeeFromEmployeesHash(employee)){
+	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) || 
+		!getCompany(company_id)->removeEmployeeFromEmployeesHash(&employeeCopy)){
 		return FAILURE;
 	}
 
 	if (salary > 0) {
-		if (!removeEmployeeeFromEmployeesTree(employee) && 
-			!removeEmployeeeFromTheCompany(employee, company_id)) {
+		if (!removeEmployeeeFromEmployeesTree(&employeeCopy) || 
+			!removeEmployeeeFromTheCompany(&employeeCopy, company_id)) {
 			return FAILURE;
 		}
 	}
 	else {
 		sumOfGradesZeroSalary -= grade;
-		decZeroSalaryDataInCompany(employee, company_id);
+		decZeroSalaryDataInCompany(&employeeCopy, company_id);
 	}
  
 	number_of_employees--;
