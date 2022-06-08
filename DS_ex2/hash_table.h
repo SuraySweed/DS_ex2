@@ -17,7 +17,7 @@ private:
 	int size;
 	int counter;
 	LinkedList** employees; //pointer to array of LinkedList, the value of every index of the array is a linked list of employees 
-	static const int init_size = 256;
+	static const int init_size = 8;
 
 public:
 	HashTable();
@@ -31,12 +31,15 @@ public:
 
 	HashTableStatus insert(Employee& employee);
 	HashTableStatus remove(Employee& employee);
-	//Employee*& operator[](int index);
+	//LinkedList* operator[](int index);
 	int getCounter() { return counter; }
 	int getSize() { return size; }
 	void updateEmployeesCompanyID(int acquirerID);
 	void mergeTwoHashies(HashTable* acquirer, HashTable* target);
 	void deleteEmployees();
+
+	void printEmployees(int company, int i);
+	void printE();
 };
 
 #endif //HASH_TABLE_H

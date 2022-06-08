@@ -265,6 +265,20 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// update the salary in the employees hash table, and in the employees company hash table
 	employeesTable->find(employeeID)->setSalary(new_salary);			    // O(1)
+	
+	/*
+	employeesTable->printE();
+
+	for (int i= 1; i < number_of_companies; i++) {
+		if (companies[i-1]) {
+			Company* c = getCompany(i);
+			HashTable* h = c->getEmployeesHashTable();
+			//for (int j = 0; j < h->getSize(); j++) {
+			h->printEmployees(i, i);
+			//}
+		}
+	}
+	*/
 	getCompany(company_id)->updateSalaryToEmployee(employeeID, new_salary); // O(1)
 
 	// update the trees

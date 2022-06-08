@@ -81,11 +81,10 @@ void LinkedList::insert(const Employee& employee)
     }
     else {
         Node* currentNode = head;
-        while (currentNode) {
+        while (currentNode->next) {
             currentNode = currentNode->next;
         }
-        currentNode = node_to_add;
-        node_to_add->next = nullptr;
+        currentNode->next = node_to_add;
     }
     size++;
 }

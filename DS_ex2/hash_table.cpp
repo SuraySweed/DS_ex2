@@ -43,47 +43,73 @@ void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_
 	{
 		new_employees_arr[i] = new LinkedList();
 	}
+	int index = 0;
 
-	//LinkedList* employeesInBlock = new LinkedList();
-
-	int count = 0;
 	for (int i = 0; i < old_size; i++) {
 		if (old_employees_array[i]) {
 			Node* currentNode = old_employees_array[i]->getHead();
 			while (currentNode) {
-				//employeesInBlock->insert(*(currentNode->data));
-				new_employees_arr[i]->insert(*(currentNode->data));
-				count++;
-				currentNode->data = nullptr;
+				index = HashFunction(currentNode->data->getID());
+				new_employees_arr[index]->insert(*(currentNode->data));
 				currentNode = currentNode->next;
 			}
+		}
+	}
+	
+	for (int i = 0; i < old_size; i++) {
+		if (old_employees_array[i]) {
 			delete old_employees_array[i];
 		}
 	}
-	delete[] old_employees_array;
+	
 
+	delete[] old_employees_array;
+	
+	employees = new_employees_arr;
+	
+	//-------------
 	/*
+	this->size = size;
+	LinkedList** newArray = new LinkedList * [size];
+	LinkedList* values = new LinkedList();
+	int count = 0;
+	for (int i = 0; i < old_size; i++)
+	{
+		if (old_employees_array[i]) {
+			Node* currentNode = old_employees_array[i]->getHead();
+			while (currentNode)
+			{
+				values->insert(*(currentNode->data));
+				count++;
+				currentNode->data = NULL;
+				currentNode = currentNode->next;
+			}
+			//delete old_employees_array[i];
+		}
+	}
+
 	for (int i = 0; i < size; i++)
 	{
-		new_employees_arr[i] = nullptr;
+		newArray[i] = new LinkedList();
 	}
-	*/
-	/*
-	Node* head = employeesInBlock->getHead();
-	for (int i = 0; i < count; i++) {
-		Employee* currentEmployee = head->data;
-		head->data = nullptr;
-		int index = HashFunction(currentEmployee->getID());
-		if (!new_employees_arr) {
-			new_employees_arr[index] = new LinkedList();
-		}
-		new_employees_arr[index]->insert(*currentEmployee);
-		head = head->next;
-	}
-	*/
-	//delete employeesInBlock;
-	employees = new_employees_arr;
+	delete[] old_employees_array;
 
+	Node* root = values->getHead();
+	for (int i = 0; i < count; i++)
+	{
+		Employee* currentEmployee = root->data;
+		root->data = NULL;
+		int index = HashFunction(currentEmployee->getID());
+		if (!newArray[index])
+		{
+			newArray[index] = new LinkedList();
+		}
+		newArray[index]->insert(*currentEmployee);
+		root = root->next;
+	}
+	delete values;
+	employees = newArray;
+	*/
 }
 
 int HashTable::HashFunction(int employee_id)
@@ -96,7 +122,6 @@ Employee* HashTable::find(int employee_id)
 	int index = HashFunction(employee_id);
 	Node* employee = employees[index]->find(employee_id);
 	if (employees[index]->find(employee_id)) {
-		//Employee* sa = employees[index]->find(employee_id)->data;
 		return ((employees[index]->find(employee_id))->data); // find in linkedlist
 	}
 	return nullptr;
@@ -159,10 +184,12 @@ void HashTable::mergeTwoHashies(HashTable* acquirer, HashTable* target)
 		while(currentNode) {
 			acquirer->insert(*(currentNode->data));
 			//target.remove(*(currentNode->data)); // check that
-			//currentNode = currentNode->next;
+			currentNode = currentNode->next;
+			/*
 			Node* temp = currentNode->next;
-			target->remove(*(currentNode->data));
+			//target->remove(*(currentNode->data));
 			currentNode = temp;
+			*/
 		}
 	}
 }
@@ -178,12 +205,42 @@ void HashTable::deleteEmployees()
 	delete[] employees;
 }
 
-/*
-Employee*& HashTable::operator[](int index)
+void HashTable::printEmployees(int company, int i)
 {
+	printf("employees of company %d\nID: ", company);
+	for (int k = 0; k < size; k++) {
+		LinkedList* l = employees[k];
+		Node* n = l->getHead();
+
+		while (n) {
+			printf("%d, ", n->data->getID());
+			n = n->next;
+		}
+	}
+	printf("\n");
+}
+
+void HashTable::printE()
+{
+	for (int i = 0; i < size; i++)
+	{
+		LinkedList* l = employees[i];
+		Node* n = l->getHead();
+		while (n) {
+			printf("Employee ID %d, company %d\n", n->data->getID(), n->data->getCompanyID());
+			n = n->next;
+		}
+	}
+}
+
+/*
+LinkedList* HashTable::operator[](int index)
+{
+	/*
 	if (index < 0 || index >= size) {
 		//throw exception
 	}
-	//return employees[index];
+	
+	return employees[index];
 }
 */
