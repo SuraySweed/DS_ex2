@@ -5,11 +5,11 @@ bool SystemManager::removeEmployeeeFromEmployeesTree(Employee* employee)
 	// return nullptr if there is one node, and we remove it
 	TreeNode<Employee>* returnedNode = employeesTree->remove(employee, employee->getGrade()); 
 	int company_employees_number = employeesTree->getNumberOfNodes();
-	if (!(!returnedNode && company_employees_number == 0) || !(returnedNode && company_employees_number >= 1)) {
-		return false;
+	if ((!returnedNode && company_employees_number == 0) || (returnedNode && company_employees_number >= 1)) {
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 bool SystemManager::removeEmployeeeFromTheCompany(Employee* employee, int company_id)
@@ -284,12 +284,13 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// update the trees
 	if (old_salary > 0) {
-		if (!removeEmployeeeFromEmployeesTree(old_employee) &&
+		if (!removeEmployeeeFromEmployeesTree(old_employee) ||
 			!removeEmployeeeFromTheCompany(old_employee, company_id)) {
 			return FAILURE;
 		}
 
 		if (!insertEmployeeToTreeAndCompany(&new_employee, company_id)) {
+			
 			return FAILURE;
 		}
 	}
@@ -331,7 +332,7 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 
 		// employee exist in the cmployees company tree, employees hash table and in the employees salary tree 
 		if (salary > 0) {
-			if (!removeEmployeeeFromEmployeesTree(old_employee) &&
+			if (!removeEmployeeeFromEmployeesTree(old_employee) ||
 				!removeEmployeeeFromTheCompany(old_employee, company_id)) {
 				return FAILURE;
 			}
