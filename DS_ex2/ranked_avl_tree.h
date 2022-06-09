@@ -442,8 +442,8 @@ inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grad
 	}
 
 	if (root && (*(root->data) > *data)) {
-		sumOfGrade += root->Grade;
-		rank++;
+		sumOfGrade = root->Grade;//// = in +=
+		rank = 1;
 		root->left = insertAux(root->left, data, grade, sumOfGrade, rank);
 	}
 	else if (root && (*(root->data) < *data)) {

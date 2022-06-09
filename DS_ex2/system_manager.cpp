@@ -266,7 +266,6 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// update the salary in the employees hash table, and in the employees company hash table
 	employeesTable->find(employeeID)->setSalary(new_salary);			    // O(1)
-	
 	/*
 	employeesTable->printE();
 
@@ -282,10 +281,11 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	*/
 	getCompany(company_id)->updateSalaryToEmployee(employeeID, new_salary); // O(1)
 
+	Employee EmployeeToDelete(employeeID, old_salary, grade, old_employee->getCompanyIDPtr());
 	// update the trees
 	if (old_salary > 0) {
-		if (!removeEmployeeeFromEmployeesTree(old_employee) ||
-			!removeEmployeeeFromTheCompany(old_employee, company_id)) {
+		if (!removeEmployeeeFromEmployeesTree(&EmployeeToDelete) ||
+			!removeEmployeeeFromTheCompany(&EmployeeToDelete, company_id)) {
 			return FAILURE;
 		}
 
@@ -330,6 +330,7 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 		employeesTable->find(employeeID)->setGrade(new_grade);
 		getCompany(company_id)->updateGradeForEmployee(employeeID, new_grade);
 
+		Employee EmployeeToDelete(employeeID, salary, old_grade, old_employee->getCompanyIDPtr());
 		// employee exist in the cmployees company tree, employees hash table and in the employees salary tree 
 		if (salary > 0) {
 			if (!removeEmployeeeFromEmployeesTree(old_employee) ||
@@ -459,7 +460,7 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 	}
 	double average = 0;
 	// !!!!! devide by 0 !!!!! check this state
-	average = ((lowSum - highSum) / (lowRank - highRank));
+	average = (double)((lowSum - highSum) / (lowRank - highRank));
 	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
 	return SUCCESS;
 }
