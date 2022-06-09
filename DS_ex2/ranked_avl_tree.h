@@ -45,6 +45,9 @@ class RankedAVL {
 	TreeNode<T>* removeAux(TreeNode<T>* root, T* data, int grade);
 	TreeNode<T>* insertAux(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank);
 	void sumBumpGradeAux(TreeNode<T>* root, int m, int* sum);
+	TreeNode<T>* getLastInIntervalAux(TreeNode<T>* root, int high, TreeNode<T>* last);
+	TreeNode<T>* getFirstInIntervalAux(TreeNode<T>* root, int low, TreeNode<T>* first);
+
 	
 public:
 	RankedAVL<T>() : _root(nullptr), NodesNumber(0) {}
@@ -163,7 +166,7 @@ inline TreeNode<T>* RankedAVL<T>::leftRotate(TreeNode<T>* root)
 	TreeNode<T>* root_left = root_right->left;
 
 	root_right->left = root;
-	root->sumOfGrades -= (root_right->sumOfGrades + root->right->Grade);
+	root->sumOfGrades -= (root_right->sumOfGrades + root_right->Grade);
 	root->rank -= (root_right->rank + 1);
 	root->right = root_left;
 	if (root_left) {
@@ -490,6 +493,36 @@ inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, int* sum)
 }
 
 template<class T>
+inline TreeNode<T>* RankedAVL<T>::getLastInIntervalAux(TreeNode<T>* root, int high, TreeNode<T>* last)
+{
+	return NULL;
+}
+
+template<class T>
+inline TreeNode<T>* RankedAVL<T>::getFirstInIntervalAux(TreeNode<T>* root, int low, TreeNode<T>* first)
+{
+	if (root == nullptr) {
+		return first;
+	}
+
+	if (*root->data >= low) {
+		if (first == nullptr && (*root->data != low)) {
+			first = root;
+		}
+		if ((first) && (*first->data > *root->data || *first->data == * root->data)) {//&& (*root->data != low)) {
+			first = root;
+			return getFirstInIntervalAux(root->left, low, first);
+		}
+		else {
+			return getFirstInIntervalAux(root->right, low, first);
+		}
+	}
+	else {
+		return getFirstInIntervalAux(root->right, low, first);
+	}
+}
+
+template<class T>
 inline T* RankedAVL<T>::getMinNodeData(TreeNode<T>* root)
 {
 	while (root && root->left) {
@@ -532,7 +565,10 @@ inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getFirstInInterval(TreeNode<T>* root, int low)
 {
-	if (root && (*(root->data) == low) && (root->left && (*(root->left->data) != low))) {
+	TreeNode<T>* first = nullptr;
+	first = getFirstInIntervalAux(root, low, first);
+	return first;
+	/*if (root && (*(root->data) == low) && (root->left && (*(root->left->data) != low))) {
 		return root;
 	} 
 
@@ -544,7 +580,7 @@ inline TreeNode<T>* RankedAVL<T>::getFirstInInterval(TreeNode<T>* root, int low)
 		if (!(root->left) || (*(root->left->data) < low && (!root->left->right || *(root->left->right->data) < low)))
 			return root;
 		return getFirstInInterval(root->left, low);
-	}
+	}*/
 
 }
 
@@ -576,10 +612,10 @@ inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, 
 	else if (*(root->data) > *(node->data)) {
 		*sum += (root->sumOfGrades + root->Grade);
 		//if (!root->left) *sum += root->Grade;
-		calcRank(root->left, node, sum);
+		calcSumOfGrades(root->left, node, sum);
 	}
 	else {
-		calcRank(root->right, node, sum);
+		calcSumOfGrades(root->right, node, sum);
 	}
 }
 
