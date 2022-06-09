@@ -145,13 +145,13 @@ inline TreeNode<T>* RankedAVL<T>::rightRotate(TreeNode<T>* root)
 	TreeNode<T>* root_right = root_left->right;
 
 	root_left->right = root;
-	root_left->sumOfGrades += root->sumOfGrades;
-	root_left->rank += root->rank;
+	root_left->sumOfGrades = root->sumOfGrades + root->Grade;
+	root_left->rank = root->rank + 1;
 	root->left = root_right;
-	if (root_right) {
+	/*if (root_right) {
 		root_right->sumOfGrades += root->Grade;
 		root_right->rank += 1;
-	}
+	}*/
 
 	return root_left;
 }
@@ -163,12 +163,12 @@ inline TreeNode<T>* RankedAVL<T>::leftRotate(TreeNode<T>* root)
 	TreeNode<T>* root_left = root_right->left;
 
 	root_right->left = root;
-	root->sumOfGrades -= root_right->sumOfGrades;
-	root->rank -= root_right->rank;
+	root->sumOfGrades -= (root_right->sumOfGrades + root->right->Grade);
+	root->rank -= (root_right->rank + 1);
 	root->right = root_left;
 	if (root_left) {
-		root_left->sumOfGrades -= root_right->Grade;
-		root_left->rank -= 1;
+		root->sumOfGrades = root_left->Grade + root_left->sumOfGrades;
+		root->rank = 1 + root_left->rank;
 	}
 
 	return root_right;
@@ -398,7 +398,10 @@ inline TreeNode<T>* RankedAVL<T>::removeAux(TreeNode<T>* root, T* data, int grad
 				_root = root;
 			}
 			else {
-				if (temp == root->right) root->sumOfGrades = temp->sumOfGrades;
+				if (temp == root->right) {
+					root->sumOfGrades -= temp->Grade;///////////////changed
+					root->rank--;
+				}
 				*(root) = *(temp);
 				root->Grade = temp->Grade;
 
@@ -408,12 +411,12 @@ inline TreeNode<T>* RankedAVL<T>::removeAux(TreeNode<T>* root, T* data, int grad
 		}
 		else {
 			TreeNode<T>* temp = findMinNodeInSubTree(root->right);
-			root->left->sumOfGrades += (temp->Grade - root->Grade);
+			//root->left->sumOfGrades += (temp->Grade - root->Grade);
 			*(root->data) = *(temp->data);
 			root->Grade = temp->Grade;
 			root->sumOfGrades -= temp->Grade;
 			root->rank--;
-			root->left->sumOfGrades += (temp->Grade - root->Grade);/////maybe need to dic rank
+			//root->left->sumOfGrades += (temp->Grade - root->Grade);/////maybe need to dic rank
 			root->right = removeAux(root->right, temp->data, grade);
 		}
 	}
@@ -442,8 +445,8 @@ inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grad
 	}
 
 	if (root && (*(root->data) > *data)) {
-		sumOfGrade = root->Grade;//// = in +=
-		rank = 1;
+		//sumOfGrade = root->Grade;//// = in +=
+		//rank = 1;
 		root->left = insertAux(root->left, data, grade, sumOfGrade, rank);
 	}
 	else if (root && (*(root->data) < *data)) {
@@ -477,10 +480,10 @@ inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, int* sum)
 	else {
 		m -= (root->rank + 1);
 		*sum += root->sumOfGrades + root->Grade;
-		if (m != 0) {
+		/*if (m != 0) {
 			*sum -= root->Grade;
 			m += 1;
-		}
+		}*/
 		sumBumpGradeAux(root->left, m, sum);
 		
 	}
@@ -554,7 +557,7 @@ inline void RankedAVL<T>::calcRank(TreeNode<T>* root, TreeNode<T>* node, int* ra
 		return;
 	}
 	else if (*(root->data) > *(node->data)) {
-		*rank += root->rank;
+		*rank += (root->rank + 1);
 		calcRank(root->left, node, rank);
 	}
 	else {
@@ -571,7 +574,7 @@ inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, 
 		return;
 	}
 	else if (*(root->data) > *(node->data)) {
-		*sum += root->sumOfGrades;
+		*sum += (root->sumOfGrades + root->Grade);
 		//if (!root->left) *sum += root->Grade;
 		calcRank(root->left, node, sum);
 	}
