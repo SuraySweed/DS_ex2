@@ -37,6 +37,7 @@ public:
 	void setSumOfGradeZeroSalary(int sum) { sum_of_grades_of_zero_salary_employees = sum; }
 	void setOwnerID(int id) { owner = id; }
 	void setEmployeesTree(RankedAVL<Employee>& other);
+	void addToSumGradesZeroSalary(int added) { sum_of_grades_of_zero_salary_employees += added; }
 	void fillEmployeesInArray(Employee** arr) { employees.fillArray(arr); }
 
 	bool addEmployee(Employee* employee);

@@ -495,7 +495,24 @@ inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, int* sum)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getLastInIntervalAux(TreeNode<T>* root, int high, TreeNode<T>* last)
 {
-	return NULL;
+	if (root == nullptr) {
+		return last;
+	}
+	if (*root->data <= high) {
+		if (last == nullptr) {
+			last = root;
+		}
+		if((last) && (*last->data < *root->data || *last->data == *root->data)){
+			last = root;
+			return getLastInIntervalAux(root->right, high, last);
+		}
+		else {
+			return getLastInIntervalAux(root->left, high, last);
+		}
+	}
+	else {
+		return getLastInIntervalAux(root->left, high, last);
+	}
 }
 
 template<class T>
@@ -545,7 +562,10 @@ inline T* RankedAVL<T>::getMaxNodeData(TreeNode<T>* root)
 template<class T>
 inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 {
-	if (root && (*(root->data) == high) && (root->right && (*(root->right->data) != high))) {
+	TreeNode<T>* last = nullptr;
+	last = getLastInIntervalAux(root, high, last);
+	return last;
+	/*if (root && (*(root->data) == high) && (root->right && (*(root->right->data) != high))) {
 		return root;
 	}
 
@@ -558,7 +578,7 @@ inline TreeNode<T>* RankedAVL<T>::getLastInInterval(TreeNode<T>* root, int high)
 		if (!(root->right) || (*(root->right->data) > high && (!(root->right->left) || *(root->right->left->data) > high)))
 			return root;
 		return getLastInInterval(root->right, high);
-	}
+	}*/
 
 }
 

@@ -346,6 +346,7 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 			}
 		}
 		else {
+			getCompany(company_id)->addToSumGradesZeroSalary(new_grade - old_grade);
 			sumOfGradesZeroSalary += (new_grade - old_grade);
 		}
 	}
@@ -406,8 +407,8 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		TreeNode<Employee>* base_root = employees_tree->getRoot();
 
 		if (employees_tree->getMaxNodeData(base_root) && (lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary()) ||
-			((higherSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
-			higherSalary < employees_tree->getMinNodeData(base_root)->getSalary())) ||
+			//((higherSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
+			//higherSalary < employees_tree->getMinNodeData(base_root)->getSalary())) ||
 			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0)) {
 			return FAILURE;
 		}
@@ -416,16 +417,19 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			if (lowerSalary == 0 && employees_tree->getMinNodeData(base_root)) {
 				lowSalary = employees_tree->getMinNodeData(base_root)->getSalary();
 			}
-			TreeNode<Employee>* highNode = employees_tree->getLastInInterval(base_root, higherSalary);
-			TreeNode<Employee>* lowNode = employees_tree->getFirstInInterval(base_root, lowSalary);
-
-			employees_tree->calcRank(base_root, highNode, &highRank);
-			employees_tree->calcRank(base_root, lowNode, &lowRank);
-			lowRank += 1;
-			employees_tree->calcSumOfGrades(base_root, highNode, &highSum);
-			employees_tree->calcSumOfGrades(base_root, lowNode, &lowSum);
-			lowSum += lowNode->Grade;
-
+			TreeNode<Employee>* highNode = nullptr, *lowNode = nullptr;
+			highNode = employees_tree->getLastInInterval(base_root, higherSalary);
+			if (highNode) {
+				lowNode = employees_tree->getFirstInInterval(base_root, lowSalary);
+			} 
+			if (highNode && lowNode) {
+				employees_tree->calcRank(base_root, highNode, &highRank);
+				employees_tree->calcRank(base_root, lowNode, &lowRank);
+				lowRank += 1;
+				employees_tree->calcSumOfGrades(base_root, highNode, &highSum);
+				employees_tree->calcSumOfGrades(base_root, lowNode, &lowSum);
+				lowSum += lowNode->Grade;
+			}
 		}
 		if (lowerSalary == 0) {
 			lowSum += company->getSumOfGradesOfZeroSalaryEmployees();
@@ -454,8 +458,10 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 			employeesTree->calcRank(base_root, highNode, &highRank);
 			employeesTree->calcRank(base_root, lowNode, &lowRank);
+			lowRank++;
 			employeesTree->calcSumOfGrades(base_root, highNode, &highSum);
 			employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
+			lowSum += lowNode->Grade;
 		}
 		if (lowerSalary == 0) {
 			lowSum += getSumOfGradeZeroSalary();
