@@ -348,10 +348,10 @@ inline TreeNode<T>* RankedAVL<T>::auxBuildTree(int left, int right, TreeNode<T>*
 	root = new TreeNode<T>(new T(*(newArr[((right + left) / 2)])));
 	root->Grade = grades[((right + left) / 2)];
 	root->left = auxBuildTree(left, ((right + left) / 2) - 1, root->left, newArr, grades);
-	if (root->left) {
+	/*if (root->left) {
 		root->left->rank += 1;
 		root->left->sumOfGrades += root->Grade;
-	}
+	}*/
 	root->right = auxBuildTree(((left + right) / 2) + 1, right, root->right, newArr, grades);
 
 	root->rank = root->right ? root->right->rank + 1 : 0;
