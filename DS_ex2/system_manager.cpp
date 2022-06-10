@@ -39,7 +39,9 @@ bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int compa
 
 Company* SystemManager::getCompany(int company_id)
 {
-	return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
+	//return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
+	int owner = companies[company_id - 1]->getData()->getOwnerID();
+	return (companies[owner - 1]->getData());
 }
 
 InvertedTree* SystemManager::getInvertedTreeCompany(int company_id)

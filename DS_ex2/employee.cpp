@@ -1,7 +1,9 @@
 #include "employee.h"
+#include "company.h"
 
 Employee::Employee(int employeeID, int employeeSalary, int employeeGrade, std::shared_ptr<int> comapnyID) :
 	id(employeeID), salary(employeeSalary), grade(employeeGrade), company_id(std::move(comapnyID)) {}
+
 
 bool Employee::operator<(const Employee& other) const
 {

@@ -1,12 +1,13 @@
 #include "company.h"
 
 Company::Company(int companyID, int companyValue) : id(companyID), value(companyValue), 
-	num_of_employees_with_zero_salary(0), sum_of_grades_of_zero_salary_employees(0), 
+	num_of_employees_with_zero_salary(0), sum_of_grades_of_zero_salary_employees(0), owner(companyID), 
 	employees(RankedAVL<Employee>()), all_employees_table(HashTable()) {}
 
 Company::Company(Company* company) : id(company->getCompanyID()), value(company->getValue()),
 	num_of_employees_with_zero_salary(company->getNumOfZeroSalaryEmployees()),
 	sum_of_grades_of_zero_salary_employees(company->getSumOfGradesOfZeroSalaryEmployees()),
+	owner(company->getOwnerID()), 
 	employees(RankedAVL<Employee>(*(company->getEmployeesTree()))),
 	all_employees_table(HashTable(*(company->getEmployeesHashTable()))) {}
 

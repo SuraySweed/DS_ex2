@@ -12,6 +12,7 @@ private:
 	int value;
 	int num_of_employees_with_zero_salary;
 	int sum_of_grades_of_zero_salary_employees;
+	int owner;	// at first, owner = currentCompanyID
 	RankedAVL<Employee> employees; // only with salary != 0
 	HashTable all_employees_table; // contain all the employees in the company
 
@@ -31,8 +32,10 @@ public:
 	RankedAVL<Employee>* getEmployeesTree() { return &employees; }
 	int getNumOfEmployeesInTree() { return employees.getNumberOfNodes(); }
 	int getNumberOfEmployees() { return all_employees_table.getCounter(); }
+	int getOwnerID() { return owner; }
 	void setNumOfZeroSalaryEmployees(int num) { num_of_employees_with_zero_salary = num; }
 	void setSumOfGradeZeroSalary(int sum) { sum_of_grades_of_zero_salary_employees = sum; }
+	void setOwnerID(int id) { owner = id; }
 	void setEmployeesTree(RankedAVL<Employee>& other);
 	void fillEmployeesInArray(Employee** arr) { employees.fillArray(arr); }
 

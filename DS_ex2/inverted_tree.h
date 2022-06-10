@@ -92,6 +92,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		return;
 	}
 
+	// parent1 is the acquierer company
 	if (parent1->size > parent2->size) {
 		parent1->acquired_value += factor * (parent2->getData()->getValue() + parent2->acquired_value);
 		parent2->acquired_value -= parent1->acquired_value;
@@ -102,6 +103,8 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		parent1->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
 
+		parent2->getData()->setOwnerID(parent1->getData()->getCompanyID()); // set ownerID to the target company
+
 		if (parent2->getData()->getNumberOfEmployees() > 0) {
 			if (parent2->getData()->getNumOfEmployeesInTree() > 0) {
 				mergeCompaniesTrees(parent1->getData(), parent2->getData());
@@ -109,6 +112,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 			mergeCompaniesHashies(parent1->getData(), parent2->getData());
 		}
 	}
+	// parent2 is the acquirer fucntion
 	else {
 		parent1->acquired_value += factor * (parent2->getData()->getValue() + parent2->acquired_value);
 		parent1->acquired_value -= parent2->acquired_value;
@@ -118,6 +122,8 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 			parent2->data->getNumOfZeroSalaryEmployees());
 		parent2->data->setSumOfGradeZeroSalary(parent1->data->getSumOfGradesOfZeroSalaryEmployees() +
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
+
+		parent1->getData()->setOwnerID(parent2->getData()->getCompanyID());
 
 		if (parent1->getData()->getNumberOfEmployees() > 0) {
 			if (parent1->getData()->getNumOfEmployeesInTree() > 0) {
