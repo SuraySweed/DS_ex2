@@ -148,8 +148,8 @@ inline TreeNode<T>* RankedAVL<T>::rightRotate(TreeNode<T>* root)
 	TreeNode<T>* root_right = root_left->right;
 
 	root_left->right = root;
-	root_left->sumOfGrades = root->sumOfGrades + root->Grade;
-	root_left->rank = root->rank + 1;
+	root_left->sumOfGrades += root->sumOfGrades + root->Grade;
+	root_left->rank += root->rank + 1;
 	root->left = root_right;
 	/*if (root_right) {
 		root_right->sumOfGrades += root->Grade;
