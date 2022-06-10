@@ -172,14 +172,18 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	std::shared_ptr<int> company_id = std::make_shared<int>();
 	*company_id = companyID;
 	Employee employee(employeeID, 0, grade, company_id);
-	Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+	
+	//Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+	
 	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) ||
-		!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
+		getCompany(companyID)->addEmployeeToCompanyHashTable(&employee)){
+		//!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
 	}
+	getCompany(companyID)->incZeroSalaryEmployees(&employee);
 
-	myCompany->incZeroSalaryEmployees(&employee);
+	//myCompany->incZeroSalaryEmployees(&employee);
 	sumOfGradesZeroSalary += grade;
 	number_of_employees++;
 
@@ -268,16 +272,19 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 
 	// update the salary in the employees hash table, and in the employees company hash table
 	employeesTable->find(employeeID)->setSalary(new_salary);			    // O(1)
+	
+	
 	/*
-	employeesTable->printE();
-
-	for (int i= 1; i < number_of_companies; i++) {
-		if (companies[i-1]) {
-			Company* c = getCompany(i);
-			HashTable* h = c->getEmployeesHashTable();
-			//for (int j = 0; j < h->getSize(); j++) {
-			h->printEmployees(i, i);
-			//}
+	if (employeeID == 246 && company_id == 7) {
+		employeesTable->printE();
+		for (int i = 1; i < number_of_companies; i++) {
+			if (companies[i - 1]) {
+				Company* c = getCompany(i);
+				HashTable* h = c->getEmployeesHashTable();
+				//for (int j = 0; j < h->getSize(); j++) {
+				h->printEmployees(i, i);
+				//}
+			}
 		}
 	}
 	*/
