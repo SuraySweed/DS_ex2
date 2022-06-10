@@ -325,7 +325,7 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 	int salary = old_employee->getSalary();
 	int new_grade = old_grade + bumpGrade;
 	int company_id = old_employee->getCompanyID();
-	Employee new_employee(employeeID, salary, old_employee->getGrade(), old_employee->getCompanyIDPtr());
+	Employee new_employee(employeeID, salary, new_grade, old_employee->getCompanyIDPtr());
 	
 	if (bumpGrade > 0) {
 		// update the employee grade in the employees hash table, and company employees hash table

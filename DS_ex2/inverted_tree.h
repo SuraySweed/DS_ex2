@@ -28,8 +28,8 @@ public:
 	InvertedTree* find(InvertedTree* group);
 	void Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner);
 	void fillGradesArray(Employee** employees_arr, int grades[], int size);
-	void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
-	void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
+	void mergeCompaniesTrees(Company* rootAcquirer, Company* targetCompany);
+	void mergeCompaniesHashies(Company* rootAcquirer, Company* targetCompany);
 };
 
 inline void InvertedTree::updatePath(InvertedTree* head, InvertedTree* node)
@@ -92,7 +92,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		return;
 	}
 
-	// parent1 is the acquierer company
+	// parent2 is the acquirer fucntion, root is parent 1... parent1 save all the data
 	if (parent1->size > parent2->size) {
 		parent1->acquired_value += factor * (owner->getData()->getValue() + owner->acquired_value);
 		parent2->acquired_value -= parent1->acquired_value;
@@ -113,7 +113,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 			mergeCompaniesHashies(parent1->getData(), parent2->getData());
 		}
 	}
-	// parent1 is the acquirer fucntion, root is parent 2
+	// parent1 is the acquirer fucntion, root is parent2
 	else {
 		parent1->acquired_value += factor * (owner->getData()->getValue() + owner->acquired_value);
 		parent1->acquired_value -= parent2->acquired_value;
@@ -127,6 +127,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 		parent2->getData()->setOwnerID(parent1->getData()->getOwnerID());
 		//parent1->getData()->setOwnerID(parent2->getData()->getCompanyID());
 		parent1->getData()->updateEmployeesCompanyID(parent2->getData()->getCompanyID());
+
 		if (parent1->getData()->getNumberOfEmployees() > 0) {
 			if (parent1->getData()->getNumOfEmployeesInTree() > 0) {
 				mergeCompaniesTrees(parent2->getData(), parent1->getData());
@@ -143,23 +144,23 @@ inline void InvertedTree::fillGradesArray(Employee** employees_arr, int grades[]
 	}
 }
 
-inline void InvertedTree::mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany)
+inline void InvertedTree::mergeCompaniesTrees(Company* rootAcquirer, Company* targetCompany)
 {
-	if (acquirerCompany->getNumOfEmployeesInTree() == 0) {
-		acquirerCompany->setEmployeesTree(*(targetCompany->getEmployeesTree()));
+	if (rootAcquirer->getNumOfEmployeesInTree() == 0) {
+		rootAcquirer->setEmployeesTree(*(targetCompany->getEmployeesTree()));
 	}
 
 	else {
 		int target_employees_number = targetCompany->getNumOfEmployeesInTree();
 		int* target_grades = new int[target_employees_number];
 		Employee** target_employees_arr = new Employee * [target_employees_number];
-		int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
+		int acquirer_employees_number = rootAcquirer->getNumOfEmployeesInTree();
 		int* acquirer_grades = new int[acquirer_employees_number];
 		Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
 
 		targetCompany->fillEmployeesInArray(target_employees_arr);
 		fillGradesArray(target_employees_arr, target_grades, target_employees_number);
-		acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
+		rootAcquirer->fillEmployeesInArray(acquirer_employees_arr);
 		fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
 
 		int total_employees = target_employees_number + acquirer_employees_number;
@@ -177,7 +178,7 @@ inline void InvertedTree::mergeCompaniesTrees(Company* acquirerCompany, Company*
 			acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
 		}
 
-		acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
+		rootAcquirer->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
 			acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
 
 		//delete targetCompany->getEmployeesTree();
@@ -196,9 +197,9 @@ inline void InvertedTree::mergeCompaniesTrees(Company* acquirerCompany, Company*
 	}
 }
 
-inline void InvertedTree::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
+inline void InvertedTree::mergeCompaniesHashies(Company* rootAcquirer, Company* targetCompany)
 {
-	acquirerCompany->getEmployeesHashTable()->mergeTwoHashies(acquirerCompany->getEmployeesHashTable(),
+	rootAcquirer->getEmployeesHashTable()->mergeTwoHashies(rootAcquirer->getEmployeesHashTable(),
 		targetCompany->getEmployeesHashTable());
 }
 
