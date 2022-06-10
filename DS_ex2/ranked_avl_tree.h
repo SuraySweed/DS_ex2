@@ -506,10 +506,10 @@ inline TreeNode<T>* RankedAVL<T>::getFirstInIntervalAux(TreeNode<T>* root, int l
 	}
 
 	if (*root->data >= low) {
-		if (first == nullptr && (*root->data != low)) {
+		if (first == nullptr){// && (*root->data != low)) {
 			first = root;
 		}
-		if ((first) && (*first->data > *root->data || *first->data == * root->data)) {//&& (*root->data != low)) {
+		if ((first) && (*first->data > *root->data || *first->data == *root->data)) {//&& (*root->data != low)) {
 			first = root;
 			return getFirstInIntervalAux(root->left, low, first);
 		}

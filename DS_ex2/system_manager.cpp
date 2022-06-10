@@ -172,14 +172,14 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	std::shared_ptr<int> company_id = std::make_shared<int>();
 	*company_id = companyID;
 	Employee employee(employeeID, 0, grade, company_id);
-	
+	Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) ||
-		!(getCompany(companyID)->addEmployeeToCompanyHashTable(&employee))) {
+		!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
 	}
 
-	getCompany(companyID)->incZeroSalaryEmployees(&employee);
+	myCompany->incZeroSalaryEmployees(&employee);
 	sumOfGradesZeroSalary += grade;
 	number_of_employees++;
 
@@ -365,7 +365,8 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		getCompany(companyID)->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
+		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+		company->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
 	}
 
 	else {
