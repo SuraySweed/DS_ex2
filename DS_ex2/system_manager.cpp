@@ -40,8 +40,8 @@ bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int compa
 Company* SystemManager::getCompany(int company_id)
 {
 	//return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
-	int owner = companies[company_id - 1]->getData()->getOwnerID();
-	return (companies[owner - 1]->getData());
+	//int owner = companies[company_id - 1]->getData()->getOwnerID();
+	return (companies[company_id - 1]->getData());
 }
 
 InvertedTree* SystemManager::getInvertedTreeCompany(int company_id)
@@ -236,10 +236,10 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
 	
 	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
-	updateCompanyIDForEmployees(targetID, acquirerID);
-
+	//updateCompanyIDForEmployees(targetID, acquirerID);
+	InvertedTree* owner = companies[companies[targetID - 1]->getData()->getOwnerID() - 1];
 	//union the two groups with updating the values
-	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor);
+	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor, owner);
 	//mergeCompaniesTrees(acquirerCompany, targetCompany);
 	//mergeCompaniesHashies(acquirerCompany, targetCompany);
 
@@ -335,8 +335,9 @@ StatusType SystemManager::PromoteEmployee(int employeeID, int bumpGrade)
 		Employee EmployeeToDelete(employeeID, salary, old_grade, old_employee->getCompanyIDPtr());
 		// employee exist in the cmployees company tree, employees hash table and in the employees salary tree 
 		if (salary > 0) {
-			if (!removeEmployeeeFromEmployeesTree(old_employee) ||
-				!removeEmployeeeFromTheCompany(old_employee, company_id)) {
+			Employee oldEmployee(employeeID, salary, old_grade, old_employee->getCompanyIDPtr());
+			if (!removeEmployeeeFromEmployeesTree(&oldEmployee) ||
+				!removeEmployeeeFromTheCompany(&oldEmployee, company_id)) {
 				return FAILURE;
 			}
 
@@ -460,9 +461,9 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-	double average = 0;
+	long double average = 0;
 	// !!!!! devide by 0 !!!!! check this state
-	average = (double)((lowSum - highSum) / (lowRank - highRank));
+	average = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
 	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
 	return SUCCESS;
 }
