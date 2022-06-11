@@ -181,7 +181,6 @@ inline void InvertedTree::mergeCompaniesTrees(Company* rootAcquirer, Company* ta
 		rootAcquirer->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
 			acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
 
-		//delete targetCompany->getEmployeesTree();
 		targetCompany->deleteEmployeeFromTree();
 
 		for (int i = 0; i < target_employees_number; i++) {

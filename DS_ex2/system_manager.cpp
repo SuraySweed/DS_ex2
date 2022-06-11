@@ -169,21 +169,27 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 		return FAILURE;
 	}
 
+	//std::shared_ptr<int> company_id = std::make_shared<int>();
+	//*company_id = companyID;
+	//Employee employee(employeeID, 0, grade, company_id);
+	
+	Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+	
 	std::shared_ptr<int> company_id = std::make_shared<int>();
-	*company_id = companyID;
+	*company_id = myCompany->getCompanyID();
+
 	Employee employee(employeeID, 0, grade, company_id);
-	
-	//Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
-	
+
+
 	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) ||
-		getCompany(companyID)->addEmployeeToCompanyHashTable(&employee)){
-		//!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
+		//getCompany(companyID)->addEmployeeToCompanyHashTable(&employee)){
+		!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
 	}
-	getCompany(companyID)->incZeroSalaryEmployees(&employee);
+	//getCompany(companyID)->incZeroSalaryEmployees(&employee);
 
-	//myCompany->incZeroSalaryEmployees(&employee);
+	myCompany->incZeroSalaryEmployees(&employee);
 	sumOfGradesZeroSalary += grade;
 	number_of_employees++;
 
@@ -236,6 +242,13 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	InvertedTree* acquirerCompany = getInvertedTreeCompany(acquirerID);
 	InvertedTree* targetCompany = getInvertedTreeCompany(targetID);
 
+	
+	HashTable* h = targetCompany->getData()->getEmployeesHashTable();
+	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
+	HashTable* h2 = acquirerCompany->getData()->getEmployeesHashTable();
+	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
+	
+
 	// acquirerCompany already bought the targetCompany
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
 	
@@ -246,6 +259,13 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor, owner);
 	//mergeCompaniesTrees(acquirerCompany, targetCompany);
 	//mergeCompaniesHashies(acquirerCompany, targetCompany);
+
+	printf("----------------------------\n");
+
+	h = targetCompany->getData()->getEmployeesHashTable();
+	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
+	h2 = acquirerCompany->getData()->getEmployeesHashTable();
+	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
 
 	return SUCCESS;
 
@@ -275,7 +295,7 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	
 	
 	/*
-	if (employeeID == 246 && company_id == 7) {
+	if (employeeID == 246 && company_id == 15) {
 		employeesTable->printE();
 		for (int i = 1; i < number_of_companies; i++) {
 			if (companies[i - 1]) {

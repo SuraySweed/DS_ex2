@@ -158,6 +158,7 @@ HashTableStatus HashTable::remove(Employee& employee)
 	if (!employees[index]->getHead()) {
 		//delete employees[index]; //delete linkedlist
 		//employees[index] = nullptr;
+		//employees[index] = new LinkedList();
 	}
 	counter--;
 	return HASH_TABLE_SUCCESS;
@@ -178,8 +179,9 @@ void HashTable::mergeTwoHashies(HashTable* acquirer, HashTable* target)
 		//for (int listIndex = 0; /*listIndex < (target.employees)[i]->getSize() && */currentNode; listIndex++) {
 		while(currentNode) {
 			acquirer->insert(*(currentNode->data));
-			//target.remove(*(currentNode->data)); // check that
+			//target->remove(*(currentNode->data)); // check that
 			currentNode = currentNode->next;
+			
 			/*
 			Node* temp = currentNode->next;
 			//target->remove(*(currentNode->data));
