@@ -426,7 +426,8 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 	//get average of employees in specific company
 	if (companyID > 0) {
-		Company* company = getCompany(companyID);
+		//Company* company = getCompany(companyID);
+		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 		if (company->getNumberOfEmployees() == 0) {
 			return FAILURE;
 		}
