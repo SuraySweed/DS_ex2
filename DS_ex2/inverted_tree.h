@@ -26,6 +26,7 @@ public:
 	Company* getData() { return data; }
 	double getAcquiredValue() { return acquired_value; }
 	InvertedTree* find(InvertedTree* group);
+	void findValue(InvertedTree* node, double* value);
 	void Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner);
 	void fillGradesArray(Employee** employees_arr, int grades[], int size);
 	void mergeCompaniesTrees(Company* rootAcquirer, Company* targetCompany);
@@ -83,6 +84,14 @@ inline InvertedTree* InvertedTree::find(InvertedTree* group)
 	return head;
 }
 
+inline void InvertedTree::findValue(InvertedTree* node, double* value)
+{
+	InvertedTree* parent = find(node);
+	*value = ((double)(node->getData()->getValue() + node->getAcquiredValue() +
+		(node != parent ? parent->getAcquiredValue() : 0)));
+	//value += node->getAcquiredValue() + parent->getAcquiredValue();
+}
+
 inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner)
 {
 	auto parent1 = find(group1);
@@ -94,7 +103,9 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 
 	// parent2 is the acquirer fucntion, root is parent 1... parent1 save all the data
 	if (parent1->size > parent2->size) {
-		parent1->acquired_value += factor * (owner->getData()->getValue() + owner->acquired_value);
+		double ownerValue = 0;
+		findValue(owner, &ownerValue);
+		parent1->acquired_value += factor * (ownerValue);
 		parent2->acquired_value -= parent1->acquired_value;
 		parent2->next = parent1;
 		parent1->size += parent2->size;
@@ -115,7 +126,9 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 	}
 	// parent1 is the acquirer fucntion, root is parent2
 	else {
-		parent1->acquired_value += factor * (owner->getData()->getValue() + owner->acquired_value);
+		double ownerValue = 0;
+		findValue(owner, &ownerValue);
+		parent1->acquired_value += factor * (ownerValue);
 		parent1->acquired_value -= parent2->acquired_value;
 		parent1->next = parent2;
 		parent2->size += parent1->size;

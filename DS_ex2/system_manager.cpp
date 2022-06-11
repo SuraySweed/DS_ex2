@@ -243,30 +243,30 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	InvertedTree* targetCompany = getInvertedTreeCompany(targetID);
 
 	
-	HashTable* h = targetCompany->getData()->getEmployeesHashTable();
+	/*HashTable* h = targetCompany->getData()->getEmployeesHashTable();
 	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
 	HashTable* h2 = acquirerCompany->getData()->getEmployeesHashTable();
 	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
-	
+	*/
 
 	// acquirerCompany already bought the targetCompany
 	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
 	
 	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
 	//updateCompanyIDForEmployees(targetID, acquirerID);
-	InvertedTree* owner = companies[companies[targetID - 1]->getData()->getOwnerID() - 1];
+	InvertedTree* owner = companies[companies[targetID - 1]->find(companies[targetID - 1])->getData()->getOwnerID() - 1];
 	//union the two groups with updating the values
 	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor, owner);
 	//mergeCompaniesTrees(acquirerCompany, targetCompany);
 	//mergeCompaniesHashies(acquirerCompany, targetCompany);
 
-	printf("----------------------------\n");
+	/*printf("----------------------------\n");
 
 	h = targetCompany->getData()->getEmployeesHashTable();
 	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
 	h2 = acquirerCompany->getData()->getEmployeesHashTable();
 	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
-
+	*/
 	return SUCCESS;
 
 }
@@ -389,11 +389,11 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 
 	int* sumBumpGrade = new int();
 	if (companyID > 0) {
-		if (getCompany(companyID)->getNumberOfEmployeesNonZero() < m) {
+		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+		if (company->getNumberOfEmployeesNonZero() < m) {
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 		company->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
 	}
 
@@ -514,7 +514,7 @@ StatusType SystemManager::CompanyValue(int companyID)
 
 	double result;
 	result = (double)(company_node->getData()->getValue());
-	result += company_node->getAcquiredValue() + head->getAcquiredValue();
+	result += (company_node->getAcquiredValue() + (head != company_node ? head->getAcquiredValue() : 0));
 	printf("CompanyValue: %.1f\n", result);
 	return SUCCESS;
 }
