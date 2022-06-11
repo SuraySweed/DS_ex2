@@ -101,11 +101,11 @@ void LinkedList::remove(const int id)
         size--;
         return;
     }
-    while (currentNode) {
-        if (currentNode->data->getID() == id) {
-            Node* toDelete = currentNode;
+    while (currentNode->next) {
+        if (currentNode->next->data->getID() == id) {
+            Node* toDelete = currentNode->next;
             Node* tempNode = toDelete->next;
-            currentNode = tempNode;
+            currentNode->next = tempNode;
             delete toDelete;
             size--;
             return;
