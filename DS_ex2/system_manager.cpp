@@ -385,20 +385,21 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		}
 	}
 
-	//long double averageBumpGrade = 0;
 	
-	/*averageBumpGrade = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
+	/*long double averageBumpGrade = 0;
+	averageBumpGrade = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
 
 	unsigned int temp = (unsigned int)(((long double)averageBumpGrade) * 10);
 	long double average = ((long double)temp) / 10;
 	if (abs(average + 0.1 - ((long double)averageBumpGrade)) <= 0.0000000001) {
 		average += 0.1;
 	}*/
+
+	long double average = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));	
+	printf("AverageBumpGradeBetweenSalaryByGroup: %.1Lf\n", average);
 	
-	long double average = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
-	printf("AverageBumpGradeBetweenSalaryByGroup: %.1lf\n", floor(10 * average + 0.5f) / 10);
-	//printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average - 0.1);
-	
+	//printf("AverageBumpGradeBetweenSalaryByGroup: %.1Lf\n", floor(10 * average + 0.5f) / 10);
+
 	return SUCCESS;
 }
 
@@ -414,6 +415,6 @@ StatusType SystemManager::CompanyValue(int companyID)
 	long double result;
 	result = (long double)(company_node->getData()->getValue());
 	result += (company_node->getAcquiredValue() + (head != company_node ? head->getAcquiredValue() : 0));
-	printf("CompanyValue: %.1lf\n", result);
+	printf("CompanyValue: %.1Lf\n", result);
 	return SUCCESS;
 }

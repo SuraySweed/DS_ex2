@@ -38,11 +38,10 @@ extern "C" {
         SUM_OF_BUMP_GRADE_BETWEEN_TOP_WORKERS_BY_GROUP_CMD = 6,
         AVERAGE_BUMP_GRADE_BETWEEN_SALARY_BY_GROUP_CMD = 7,
         COMPANY_VALUE_CMD = 8,
-        BUMP_GRADE_TO_EMPLOYEES_CMD = 9,
-        QUIT_CMD = 10
+        QUIT_CMD = 9
     } commandType;
 
-    static const int numActions = 11;
+    static const int numActions = 10;
     static const char* commandStr[] = {
             "Init",
             "AddEmployee",
@@ -53,7 +52,6 @@ extern "C" {
             "SumOfBumpGradeBetweenTopWorkersByGroup ",
             "AverageBumpGradeBetweenSalaryByGroup ",
             "CompanyValue",
-            "BumpGradeToEmployees",
             "Quit"
     };
 
@@ -139,7 +137,6 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
     static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void* DS, const char* const command);
     static errorType OnAverageBumpGradeBetweenSalaryByGroup(void* DS, const char* const command);
     static errorType OnCompanyValue(void* DS, const char* const command);
-    static errorType OnBumpGradeToEmployees(void* DS, const char* const command);
     static errorType OnQuit(void** DS, const char* const command);
 
     /***************************************************************************/
@@ -182,11 +179,6 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
         case (COMPANY_VALUE_CMD):
             rtn_val = OnCompanyValue(DS, command_args);
             break;
-        
-        case (BUMP_GRADE_TO_EMPLOYEES_CMD):
-            rtn_val = OnBumpGradeToEmployees(DS, command_args);
-            break;
-       
         case (QUIT_CMD):
             rtn_val = OnQuit(&DS, command_args);
             break;
@@ -338,6 +330,9 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
             return error_free;
         }
 
+        /*
+         * Implement here the printing of the variable
+         */
         return error_free;
     }
 
@@ -378,30 +373,6 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
 
         return error_free;
     }
-
-    /***************************************************************************/
-    /* OnBumpGradeToEmployees                                                        */
-    /***************************************************************************/
-    
-    // * 20 points Bonus function:
-    static errorType OnBumpGradeToEmployees(void* DS, const char* const command) {
-        int lowerSalary;
-        int higherSalary;
-        int bumpGrade;
-        ValidateRead(sscanf(command, "%d %d %d", &lowerSalary, &higherSalary, &bumpGrade), 3,
-                     "BumpGradeToEmployees failed.\n");
-        StatusType res = BumpGradeToEmployees(DS, lowerSalary, higherSalary, bumpGrade);
-
-        if (res != SUCCESS) {
-            printf("BumpGradeToEmployees: %s\n", ReturnValToStr(res));
-            return error_free;
-        }
-
-        printf("BumpGradeToEmployees: %s\n", ReturnValToStr(res));
-
-        return error_free;
-    }
-    
 
     /***************************************************************************/
     /* OnQuit                                                                  */

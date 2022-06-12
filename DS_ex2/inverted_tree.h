@@ -11,7 +11,7 @@ private:
 	int key;
 	Company* data;
 	int size;
-	double acquired_value;
+	long double acquired_value;
 	InvertedTree* next;
 
 	void updatePath(InvertedTree* head, InvertedTree* node);
@@ -24,9 +24,9 @@ public:
 	~InvertedTree() = default;
 	
 	Company* getData() { return data; }
-	double getAcquiredValue() { return acquired_value; }
+	long double getAcquiredValue() { return acquired_value; }
 	InvertedTree* find(InvertedTree* group);
-	void findValue(InvertedTree* node, double* value);
+	void findValue(InvertedTree* node, long double* value);
 	void Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner);
 	void fillGradesArray(Employee** employees_arr, int grades[], int size);
 	void mergeCompaniesTrees(Company* rootAcquirer, Company* targetCompany);
@@ -74,10 +74,10 @@ inline InvertedTree* InvertedTree::find(InvertedTree* group)
 	return head;
 }
 
-inline void InvertedTree::findValue(InvertedTree* node, double* value)
+inline void InvertedTree::findValue(InvertedTree* node, long double* value)
 {
 	InvertedTree* parent = find(node);
-	*value = ((double)(node->getData()->getValue() + node->getAcquiredValue() +
+	*value = ((long double)(node->getData()->getValue() + node->getAcquiredValue() +
 		(node != parent ? parent->getAcquiredValue() : 0)));
 }
 
@@ -92,7 +92,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 
 	// parent2 is the acquirer fucntion, root is parent 1... parent1 save all the data
 	if (parent1->size > parent2->size) {
-		double ownerValue = 0;
+		long double ownerValue = 0;
 		findValue(owner, &ownerValue);
 		parent1->acquired_value += factor * (ownerValue);
 		parent2->acquired_value -= parent1->acquired_value;
@@ -115,7 +115,7 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 	}
 	// parent1 is the acquirer fucntion, root is parent2
 	else {
-		double ownerValue = 0;
+		long double ownerValue = 0;
 		findValue(owner, &ownerValue);
 		parent1->acquired_value += factor * (ownerValue);
 		parent1->acquired_value -= parent2->acquired_value;

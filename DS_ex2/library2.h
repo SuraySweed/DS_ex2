@@ -46,10 +46,10 @@ extern "C" {
 
     StatusType CompanyValue(void* DS, int companyID);
 
-    
+    /*
      //* 20 point Bonus function:
     StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int bumpGrade);
-     
+     */
 
     void Quit(void** DS);
 
