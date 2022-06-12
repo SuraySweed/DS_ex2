@@ -203,7 +203,7 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	}
 
 	Employee* employee = employeesTable->find(employeeID);
-	Employee employeeCopy(employeeID, employee->getSalary(), employee->getGrade(), employee->getCompanyIDPtr());
+	//Employee employeeCopy(employeeID, employee->getSalary(), employee->getGrade(), employee->getCompanyIDPtr());
 	if (!employee) {
 		return FAILURE;
 	}
@@ -211,6 +211,8 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	int company_id = employee->getCompanyID();
 	int grade = employee->getGrade();
 	
+	Employee employeeCopy(employeeID, salary, grade, employee->getCompanyIDPtr());
+
 	// remove employee from the hash table and from the employees company hash table
 	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) || 
 		!getCompany(company_id)->removeEmployeeFromEmployeesHash(&employeeCopy)){
@@ -434,10 +436,10 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		RankedAVL<Employee>* employees_tree = company->getEmployeesTree();
 		TreeNode<Employee>* base_root = employees_tree->getRoot();
 
-		if (employees_tree->getMaxNodeData(base_root) && (lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary()) ||
+		if (employees_tree->getMaxNodeData(base_root) && ((lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary()) ||
 			//((higherSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
 			//higherSalary < employees_tree->getMinNodeData(base_root)->getSalary())) ||
-			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0)) {
+			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0))) {
 			return FAILURE;
 		}
 		
@@ -469,10 +471,10 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 		TreeNode<Employee>* base_root = employeesTree->getRoot();
 
-		if (employeesTree->getMaxNodeData(base_root) && (lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary()) ||
-			((higherSalary != 0) && employeesTree->getMinNodeData(base_root) && 
-			(higherSalary < employeesTree->getMinNodeData(base_root)->getSalary())) ||
-			(higherSalary == 0 && getNumberOfZeroSalaryEmployees() == 0)) {
+		if (employeesTree->getMaxNodeData(base_root) && ((lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary()) ||
+			//((higherSalary != 0) && employeesTree->getMinNodeData(base_root)) && 
+			//(higherSalary < employeesTree->getMinNodeData(base_root)->getSalary())) ||
+			(higherSalary == 0 && getNumberOfZeroSalaryEmployees() == 0))) {
 			return FAILURE;
 		}
 
@@ -496,9 +498,15 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-	long double average = 0;
+	double averageBumpGrade = 0;
 	// !!!!! devide by 0 !!!!! check this state
-	average = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
+	averageBumpGrade = (double)((double)(lowSum - highSum) / (double)(lowRank - highRank));
+
+	int temp = (int)(((double)averageBumpGrade) * 10);
+	double average = ((double)temp) / 10;
+	if (abs(average + 0.1 - ((double)averageBumpGrade)) <= 0.0000000001) {
+		average += 0.1;
+	}
 	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
 	return SUCCESS;
 }

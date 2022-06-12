@@ -66,9 +66,13 @@ LinkedList::~LinkedList()
 {
     Node* current_node = head;
     while (current_node != nullptr) {
-        Node* to_delete = current_node;
+        Node* next = current_node->next;
+        delete current_node;
+        current_node = next;
+
+        /*Node* to_delete = current_node;
         current_node = current_node->next;
-        delete to_delete;
+        delete to_delete;*/
         size--;
     }
 }

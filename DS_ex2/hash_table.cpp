@@ -16,7 +16,7 @@ HashTable::HashTable(const HashTable& hash_table) : size(hash_table.size), count
 	}
 	for (int i = 0; i < size; i++) {
 		Node* currentNode = (hash_table.employees)[i]->getHead();
-		for (int listIndex = 0; listIndex < (hash_table.employees)[i]->getSize() && currentNode; listIndex++) {
+		while (currentNode) {
 			this->insert(*(currentNode->data));
 			currentNode = currentNode->next;
 		}
@@ -34,7 +34,6 @@ HashTable::~HashTable()
 	delete[] employees;
 }
 
-// too dooo
 void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_size)
 {
 	size = new_size;
@@ -55,61 +54,17 @@ void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_
 			}
 		}
 	}
-	
+
+	/*
 	for (int i = 0; i < old_size; i++) {
 		if (old_employees_array[i]) {
 			delete old_employees_array[i];
 		}
 	}
 	
-
-	delete[] old_employees_array;
+	delete[] old_employees_array;*/
 	
 	employees = new_employees_arr;
-	
-	//-------------
-	/*
-	this->size = size;
-	LinkedList** newArray = new LinkedList * [size];
-	LinkedList* values = new LinkedList();
-	int count = 0;
-	for (int i = 0; i < old_size; i++)
-	{
-		if (old_employees_array[i]) {
-			Node* currentNode = old_employees_array[i]->getHead();
-			while (currentNode)
-			{
-				values->insert(*(currentNode->data));
-				count++;
-				currentNode->data = NULL;
-				currentNode = currentNode->next;
-			}
-			//delete old_employees_array[i];
-		}
-	}
-
-	for (int i = 0; i < size; i++)
-	{
-		newArray[i] = new LinkedList();
-	}
-	delete[] old_employees_array;
-
-	Node* root = values->getHead();
-	for (int i = 0; i < count; i++)
-	{
-		Employee* currentEmployee = root->data;
-		root->data = NULL;
-		int index = HashFunction(currentEmployee->getID());
-		if (!newArray[index])
-		{
-			newArray[index] = new LinkedList();
-		}
-		newArray[index]->insert(*currentEmployee);
-		root = root->next;
-	}
-	delete values;
-	employees = newArray;
-	*/
 }
 
 int HashTable::HashFunction(int employee_id)
@@ -120,7 +75,7 @@ int HashTable::HashFunction(int employee_id)
 Employee* HashTable::find(int employee_id)
 {
 	int index = HashFunction(employee_id);
-	Node* employee = employees[index]->find(employee_id);
+	//Node* employee = employees[index]->find(employee_id);
 	if (employees[index]->find(employee_id)) {
 		return ((employees[index]->find(employee_id))->data); // find in linkedlist
 	}
@@ -233,7 +188,7 @@ void HashTable::printE()
 /*
 LinkedList* HashTable::operator[](int index)
 {
-	/*
+	
 	if (index < 0 || index >= size) {
 		//throw exception
 	}

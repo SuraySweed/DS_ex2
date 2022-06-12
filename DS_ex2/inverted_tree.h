@@ -115,8 +115,8 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
 
 		parent2->getData()->setOwnerID(parent1->getData()->getOwnerID());
-		//parent2->getData()->setOwnerID(parent1->getData()->getCompanyID()); // set ownerID to the target company
 		parent2->getData()->updateEmployeesCompanyID(parent1->getData()->getCompanyID());
+
 		if (parent2->getData()->getNumberOfEmployees() > 0) {
 			if (parent2->getData()->getNumOfEmployeesInTree() > 0) {
 				mergeCompaniesTrees(parent1->getData(), parent2->getData());
