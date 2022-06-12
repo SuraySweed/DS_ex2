@@ -44,7 +44,7 @@ class RankedAVL {
 	void inorderArray(TreeNode<T>* root, T** arr, int& i);
 	TreeNode<T>* removeAux(TreeNode<T>* root, T* data, int grade);
 	TreeNode<T>* insertAux(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank);
-	void sumBumpGradeAux(TreeNode<T>* root, int m, int* sum);
+	void sumBumpGradeAux(TreeNode<T>* root, int m, unsigned int* sum);
 	TreeNode<T>* getLastInIntervalAux(TreeNode<T>* root, int high, TreeNode<T>* last);
 	TreeNode<T>* getFirstInIntervalAux(TreeNode<T>* root, int low, TreeNode<T>* first);
 
@@ -66,7 +66,7 @@ public:
 	void fillArray(T* arr[]);
 	void mergeTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[]);
 	TreeNode<T>* findMinNodeInSubTree(TreeNode<T>* subTreeRoot);
-	void sumBumpGrade(int m, int* sum);
+	void sumBumpGrade(int m, unsigned int* sum);
 	//void getEmployeesDataBetweenHighLow(int low, int high, int* Number, int* sum);
 	T* getMinNodeData(TreeNode<T>* root);
 	T* getMaxNodeData(TreeNode<T>* root);
@@ -469,7 +469,7 @@ inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grad
 }
 
 template<class T>
-inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, int* sum)
+inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, unsigned int* sum)
 {
 	if (!root || m == 0) {
 		return;
@@ -726,7 +726,7 @@ inline TreeNode<T>* RankedAVL<T>::findMinNodeInSubTree(TreeNode<T>* subTreeRoot)
 }
 
 template<class T>
-inline void RankedAVL<T>::sumBumpGrade(int m, int* sum)
+inline void RankedAVL<T>::sumBumpGrade(int m, unsigned int* sum)
 {
 	sumBumpGradeAux(_root, m, sum);
 }

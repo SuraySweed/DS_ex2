@@ -70,9 +70,6 @@ LinkedList::~LinkedList()
         delete current_node;
         current_node = next;
 
-        /*Node* to_delete = current_node;
-        current_node = current_node->next;
-        delete to_delete;*/
         size--;
     }
 }

@@ -40,8 +40,6 @@ bool SystemManager::insertEmployeeToTreeAndCompany(Employee* employee, int compa
 
 Company* SystemManager::getCompany(int company_id)
 {
-	//return (companies[company_id - 1]->find(companies[company_id - 1])->getData());
-	//int owner = companies[company_id - 1]->getData()->getOwnerID();
 	return (companies[company_id - 1]->getData());
 }
 
@@ -61,84 +59,10 @@ int SystemManager::getNumberOfZeroSalaryEmployees()
 	return (number_of_employees - employeesTree->getNumberOfNodes());
 }
 
-/*void SystemManager::fillGradesArray(Employee** employees_arr, int grades[] , int size)
-{
-	for (int i = 0; i < size; i++) {
-		grades[i] = employees_arr[i]->getGrade();
-	}
-}
-
-void SystemManager::mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany)
-{
-	int target_employees_number = targetCompany->getNumOfEmployeesInTree();
-	int* target_grades = new int[target_employees_number];
-	Employee** target_employees_arr = new Employee * [target_employees_number];
-	int acquirer_employees_number = acquirerCompany->getNumOfEmployeesInTree();
-	int* acquirer_grades = new int[acquirer_employees_number];
-	Employee** acquirer_employees_arr = new Employee * [acquirer_employees_number];
-
-	targetCompany->fillEmployeesInArray(target_employees_arr);
-	fillGradesArray(target_employees_arr, target_grades, target_employees_number);
-	acquirerCompany->fillEmployeesInArray(acquirer_employees_arr);
-	fillGradesArray(acquirer_employees_arr, acquirer_grades, acquirer_employees_number);
-
-	int total_employees = target_employees_number + acquirer_employees_number;
-	int* total_grades = new int[total_employees];
-	Employee** total_employees_arr = new Employee * [total_employees];
-
-	Employee** target_fill_array = new Employee * [target_employees_number];
-	Employee** acquire_fill_array = new Employee * [acquirer_employees_number];
-	
-	for (int i = 0; i < target_employees_number; i++) {
-		target_fill_array[i] = new Employee(*(target_employees_arr[i]));
-	}
-
-	for (int i = 0; i < acquirer_employees_number; i++) {
-		acquire_fill_array[i] = new Employee(*(acquirer_employees_arr[i]));
-	}
-
-	acquirerCompany->getEmployeesTree()->mergeTree(target_fill_array, target_grades, target_employees_number,
-		acquire_fill_array, acquirer_grades, acquirer_employees_number, total_employees_arr, total_grades);
-
-	delete targetCompany->getEmployeesTree();
-
-	for (int i = 0; i < target_employees_number; i++) {
-		delete target_fill_array[i];
-	}
-
-	for (int i = 0; i < acquirer_employees_number; i++) {
-		delete acquire_fill_array[i];
-	}
-
-	delete[] target_fill_array;
-	delete[] acquire_fill_array;
-}
-
-void SystemManager::mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany)
-{
-	acquirerCompany->getEmployeesHashTable().mergeTwoHashies(acquirerCompany->getEmployeesHashTable(), targetCompany->getEmployeesHashTable());
-}*/
-
-/*
-void SystemManager::updateCompanyIDForEmployeesByInorder(TreeNode<Employee>* root, int acquirerID
-	, int targetEmployeesNumber, int i)
-{
-	if (root == nullptr || targetEmployeesNumber <= 0)
-		return;
-	updateCompanyIDForEmployeesByInorder(root->left, acquirerID, targetEmployeesNumber, i);
-	if (i < targetEmployeesNumber) {
-		root->data->setEmployerID(acquirerID);
-		i++;
-		updateCompanyIDForEmployeesByInorder(root->right, acquirerID, targetEmployeesNumber, i);
-	}
-	return;
-}
-*/
 
 SystemManager::SystemManager(int k) : number_of_companies(k), number_of_employees(0), 
 	sumOfGradesZeroSalary(0), companies(new InvertedTree * [k]), employeesTable(new HashTable()), 
 	employeesTree(new RankedAVL<Employee>())
-
 {
 	/*
 	*  initialize the array of the companies, 
@@ -169,26 +93,17 @@ StatusType SystemManager::AddEmployee(int employeeID, int companyID, int grade)
 	if (employeesTable->find(employeeID)) {
 		return FAILURE;
 	}
-
-	//std::shared_ptr<int> company_id = std::make_shared<int>();
-	//*company_id = companyID;
-	//Employee employee(employeeID, 0, grade, company_id);
 	
 	Company* myCompany = companies[companyID - 1]->find(companies[companyID - 1])->getData();
-	
 	std::shared_ptr<int> company_id = std::make_shared<int>();
 	*company_id = myCompany->getCompanyID();
-
 	Employee employee(employeeID, 0, grade, company_id);
 
-
 	if ((employeesTable->insert(employee) != HASH_TABLE_SUCCESS) ||
-		//getCompany(companyID)->addEmployeeToCompanyHashTable(&employee)){
 		!(myCompany->addEmployeeToCompanyHashTable(&employee))) {
 		company_id.reset();
 		return FAILURE;
 	}
-	//getCompany(companyID)->incZeroSalaryEmployees(&employee);
 
 	myCompany->incZeroSalaryEmployees(&employee);
 	sumOfGradesZeroSalary += grade;
@@ -204,7 +119,6 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	}
 
 	Employee* employee = employeesTable->find(employeeID);
-	//Employee employeeCopy(employeeID, employee->getSalary(), employee->getGrade(), employee->getCompanyIDPtr());
 	if (!employee) {
 		return FAILURE;
 	}
@@ -214,7 +128,6 @@ StatusType SystemManager::RemoveEmployee(int employeeID)
 	
 	Employee employeeCopy(employeeID, salary, grade, employee->getCompanyIDPtr());
 
-	// remove employee from the hash table and from the employees company hash table
 	if ((employeesTable->remove(*employee) != HASH_TABLE_SUCCESS) || 
 		!getCompany(company_id)->removeEmployeeFromEmployeesHash(&employeeCopy)){
 		return FAILURE;
@@ -245,31 +158,12 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	InvertedTree* acquirerCompany = getInvertedTreeCompany(acquirerID);
 	InvertedTree* targetCompany = getInvertedTreeCompany(targetID);
 
-	
-	/*HashTable* h = targetCompany->getData()->getEmployeesHashTable();
-	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
-	HashTable* h2 = acquirerCompany->getData()->getEmployeesHashTable();
-	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
-	*/
-
 	// acquirerCompany already bought the targetCompany
-	if (acquirerCompany == targetCompany) return INVALID_INPUT; ///// check if we have to return SUCCESS
+	if (acquirerCompany == targetCompany) return INVALID_INPUT; 
 	
-	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
-	//updateCompanyIDForEmployees(targetID, acquirerID);
 	InvertedTree* owner = companies[companies[targetID - 1]->find(companies[targetID - 1])->getData()->getOwnerID() - 1];
-	//union the two groups with updating the values
 	companies[targetID - 1]->Union(acquirerCompany, targetCompany, factor, owner);
-	//mergeCompaniesTrees(acquirerCompany, targetCompany);
-	//mergeCompaniesHashies(acquirerCompany, targetCompany);
 
-	/*printf("----------------------------\n");
-
-	h = targetCompany->getData()->getEmployeesHashTable();
-	h->printEmployees(targetCompany->getData()->getCompanyID(), targetCompany->getData()->getCompanyID());
-	h2 = acquirerCompany->getData()->getEmployeesHashTable();
-	h2->printEmployees(acquirerCompany->getData()->getCompanyID(), acquirerCompany->getData()->getCompanyID());
-	*/
 	return SUCCESS;
 
 }
@@ -296,21 +190,6 @@ StatusType SystemManager::EmployeeSalaryIncrease(int employeeID, int salaryIncre
 	// update the salary in the employees hash table, and in the employees company hash table
 	employeesTable->find(employeeID)->setSalary(new_salary);			    // O(1)
 	
-	
-	/*
-	if (employeeID == 246 && company_id == 15) {
-		employeesTable->printE();
-		for (int i = 1; i < number_of_companies; i++) {
-			if (companies[i - 1]) {
-				Company* c = getCompany(i);
-				HashTable* h = c->getEmployeesHashTable();
-				//for (int j = 0; j < h->getSize(); j++) {
-				h->printEmployees(i, i);
-				//}
-			}
-		}
-	}
-	*/
 	getCompany(company_id)->updateSalaryToEmployee(employeeID, new_salary); // O(1)
 
 	Employee EmployeeToDelete(employeeID, old_salary, grade, old_employee->getCompanyIDPtr());
@@ -390,14 +269,14 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 		return INVALID_INPUT;
 	}
 
-	int* sumBumpGrade = new int();
+	unsigned int* sumBumpGrade = new unsigned int();
 	if (companyID > 0) {
 		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 		if (company->getNumberOfEmployeesNonZero() < m) {
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		company->sumBumpGradesInCompany(m, (int*)sumBumpGrade);
+		company->sumBumpGradesInCompany(m, (unsigned int*)sumBumpGrade);
 	}
 
 	else {
@@ -405,10 +284,10 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		employeesTree->sumBumpGrade(m, (int*)sumBumpGrade);
+		employeesTree->sumBumpGrade(m, (unsigned int*)sumBumpGrade);
 	}
 
-	printf("SumOfBumpGradeBetweenTopWorkersByGroup: %d\n", *sumBumpGrade);
+	printf("SumOfBumpGradeBetweenTopWorkersByGroup: %u\n", *sumBumpGrade);
 	delete sumBumpGrade;
 	return SUCCESS;
 }
@@ -429,7 +308,6 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 	//get average of employees in specific company
 	if (companyID > 0) {
-		//Company* company = getCompany(companyID);
 		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 		if (company->getNumberOfEmployees() == 0) {
 			return FAILURE;
@@ -500,33 +378,25 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 				employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
 				lowSum += lowNode->Grade;
 			}
-			/*
-			employeesTree->calcRank(base_root, highNode, &highRank);
-			employeesTree->calcRank(base_root, lowNode, &lowRank);
-			lowRank++;
-			employeesTree->calcSumOfGrades(base_root, highNode, &highSum);
-			employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
-			lowSum += lowNode->Grade;
-			*/
 		}
 		if (lowerSalary == 0) {
 			lowSum += getSumOfGradeZeroSalary();
 			lowRank += getNumberOfZeroSalaryEmployees();
 		}
 	}
-	//double averageBumpGrade = 0;
-	// !!!!! devide by 0 !!!!! check this state
-	
-	/*averageBumpGrade = (double)((double)(lowSum - highSum) / (double)(lowRank - highRank));
 
-	int temp = (int)(((double)averageBumpGrade) * 10);
-	double average = ((double)temp) / 10;
-	if (abs(average + 0.1 - ((double)averageBumpGrade)) <= 0.0000000001) {
+	//long double averageBumpGrade = 0;
+	
+	/*averageBumpGrade = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
+
+	unsigned int temp = (unsigned int)(((long double)averageBumpGrade) * 10);
+	long double average = ((long double)temp) / 10;
+	if (abs(average + 0.1 - ((long double)averageBumpGrade)) <= 0.0000000001) {
 		average += 0.1;
 	}*/
 	
-	double average = (double)((double)(lowSum - highSum) / (double)(lowRank - highRank));
-	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", floor(10 * average + 0.5f) / 10);
+	long double average = (long double)((long double)(lowSum - highSum) / (long double)(lowRank - highRank));
+	printf("AverageBumpGradeBetweenSalaryByGroup: %.1lf\n", floor(10 * average + 0.5f) / 10);
 	//printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average - 0.1);
 	
 	return SUCCESS;
@@ -541,9 +411,9 @@ StatusType SystemManager::CompanyValue(int companyID)
 	InvertedTree* company_node = companies[companyID - 1];
 	InvertedTree* head = companies[companyID - 1]->find(company_node);
 
-	double result;
-	result = (double)(company_node->getData()->getValue());
+	long double result;
+	result = (long double)(company_node->getData()->getValue());
 	result += (company_node->getAcquiredValue() + (head != company_node ? head->getAcquiredValue() : 0));
-	printf("CompanyValue: %.1f\n", result);
+	printf("CompanyValue: %.1lf\n", result);
 	return SUCCESS;
 }

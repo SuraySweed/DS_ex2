@@ -11,13 +11,6 @@ Company::Company(Company* company) : id(company->getCompanyID()), value(company-
 	employees(RankedAVL<Employee>(*(company->getEmployeesTree()))),
 	all_employees_table(HashTable(*(company->getEmployeesHashTable()))) {}
 
-/*
-Company::Company(const Company& company) : id(company.getCompanyID()), value(company.getValue()),
-num_of_employees_with_zero_salary(company.getNumOfZeroSalaryEmployees()),
-sum_of_grades_of_zero_salary_employees(company.getSumOfGradesOfZeroSalaryEmployees()),
-employees(RankedAVL<Employee>((company.getEmployeesTree())),
-	all_employees_table(HashTable(company.getEmployeesHashTable())) {}
-*/
 
 void Company::setEmployeesTree(RankedAVL<Employee>& other)
 {
@@ -44,10 +37,8 @@ bool Company::removeEmployee(Employee* employee)
 {
 	TreeNode<Employee>* returnedNode = employees.remove(employee, employee->getGrade()); // return nullptr if there is one node, and we remove it3
 	int company_employees_number = employees.getNumberOfNodes();
-	//HashTableStatus hash_remove_result = all_employees_table.remove(*employee);
 
 	if ((!returnedNode && company_employees_number == 0) || (returnedNode && company_employees_number >= 1)) {
-		//hash_remove_result == HASH_TABLE_SUCCESS) {
 		return true;
 	}
 	return false;
@@ -76,7 +67,7 @@ void Company::decZeroSalaryEmployees(Employee* employee)
 	}
 }
 
-void Company::sumBumpGradesInCompany(int m, int* sum)
+void Company::sumBumpGradesInCompany(int m, unsigned int* sum)
 {
 	employees.sumBumpGrade(m, sum);
 }

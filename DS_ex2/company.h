@@ -46,7 +46,7 @@ public:
 	bool removeEmployeeFromEmployeesHash(Employee* employee);
 	void incZeroSalaryEmployees(Employee* employee);
 	void decZeroSalaryEmployees(Employee* employee);
-	void sumBumpGradesInCompany(int m, int* sum);
+	void sumBumpGradesInCompany(int m, unsigned int* sum);
 	void updateEmployeesCompanyID(int acquirerID);
 	void updateSalaryToEmployee(int employeeID, int new_salary);
 	void updateGradeForEmployee(int employeeID, int new_grade);

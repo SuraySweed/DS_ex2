@@ -23,7 +23,7 @@ public:
 	HashTable();
 	HashTable (const HashTable& hash_table);
 	HashTable& operator=(const HashTable& node) = default;
-	~HashTable() = default;
+	~HashTable();
 
 	void resize(int new_size, LinkedList* old_employees_array[], int old_size);
 	int HashFunction(int employee_id);
@@ -31,15 +31,11 @@ public:
 
 	HashTableStatus insert(Employee& employee);
 	HashTableStatus remove(Employee& employee);
-	//LinkedList* operator[](int index);
 	int getCounter() { return counter; }
 	int getSize() { return size; }
 	void updateEmployeesCompanyID(int acquirerID);
 	void mergeTwoHashies(HashTable* acquirer, HashTable* target);
 	void deleteEmployees();
-
-	void printEmployees(int company, int i);
-	void printE();
 };
 
 #endif //HASH_TABLE_H

@@ -29,9 +29,6 @@ private:
 	void updateCompanyIDForEmployees(int targetID, int acquirerID);
 	int getNumberOfZeroSalaryEmployees();
 	int getSumOfGradeZeroSalary() { return sumOfGradesZeroSalary; }
-	//void fillGradesArray(Employee** employees_arr, int grades[], int size);
-	//void mergeCompaniesTrees(Company* acquirerCompany, Company* targetCompany);
-	//void mergeCompaniesHashies(Company* acquirerCompany, Company* targetCompany);
 
 public:
 	SystemManager(int k);
@@ -46,7 +43,6 @@ public:
 	StatusType SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, int m);
 	StatusType AverageBumpGradeBetweenSalaryByGroup(int companyID, int lowerSalary, int higherSalary);
 	StatusType CompanyValue(int companyID);
-
 };
 
 #endif

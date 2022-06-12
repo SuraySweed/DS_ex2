@@ -35,7 +35,6 @@ public:
 
 inline void InvertedTree::updatePath(InvertedTree* head, InvertedTree* node)
 {
-	//InvertedTree* node = group;
 	if (head == node) {
 		return;
 	}
@@ -62,15 +61,6 @@ inline void InvertedTree::updateAcquiredValue(InvertedTree* node)
 	}
 }
 
-/*inline InvertedTree::~InvertedTree()
-{
-	while (next) {
-		InvertedTree* toDelete = next;
-		next = next->next;
-		delete toDelete->data;
-	}
-}*/
-
 inline InvertedTree* InvertedTree::find(InvertedTree* group)
 {
 	InvertedTree* head = group;
@@ -89,7 +79,6 @@ inline void InvertedTree::findValue(InvertedTree* node, double* value)
 	InvertedTree* parent = find(node);
 	*value = ((double)(node->getData()->getValue() + node->getAcquiredValue() +
 		(node != parent ? parent->getAcquiredValue() : 0)));
-	//value += node->getAcquiredValue() + parent->getAcquiredValue();
 }
 
 inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, double factor, InvertedTree* owner)
@@ -138,7 +127,6 @@ inline void InvertedTree::Union(InvertedTree* group1, InvertedTree* group2, doub
 			parent2->data->getSumOfGradesOfZeroSalaryEmployees());
 
 		parent2->getData()->setOwnerID(parent1->getData()->getOwnerID());
-		//parent1->getData()->setOwnerID(parent2->getData()->getCompanyID());
 		parent1->getData()->updateEmployeesCompanyID(parent2->getData()->getCompanyID());
 
 		if (parent1->getData()->getNumberOfEmployees() > 0) {
@@ -214,6 +202,5 @@ inline void InvertedTree::mergeCompaniesHashies(Company* rootAcquirer, Company* 
 	rootAcquirer->getEmployeesHashTable()->mergeTwoHashies(rootAcquirer->getEmployeesHashTable(),
 		targetCompany->getEmployeesHashTable());
 }
-
 
 #endif
