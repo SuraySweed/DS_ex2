@@ -159,13 +159,13 @@ void HashTable::deleteEmployees()
 
 void HashTable::printEmployees(int company, int i)
 {
-	printf("employees of company %d\nID: ", company);
+	printf("employees of company %d:\n", company);
 	for (int k = 0; k < size; k++) {
 		LinkedList* l = employees[k];
 		Node* n = l->getHead();
 
 		while (n) {
-			printf("%d, ", n->data->getID());
+			printf("EmployeeID: %d, Salary: %d, Grade: %d \n", n->data->getID(), n->data->getSalary(), n->data->getGrade());
 			n = n->next;
 		}
 	}

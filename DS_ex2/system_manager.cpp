@@ -430,9 +430,17 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 	if (companyID > 0) {
 		//Company* company = getCompany(companyID);
 		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
+		Company* comp19 = companies[18]->getData();
 		if (company->getNumberOfEmployees() == 0) {
 			return FAILURE;
 		}
+		/*
+		if (lowerSalary == 5 && higherSalary == 10 && companyID == 13) {
+			HashTable* h = company->getEmployeesHashTable();
+			h->printEmployees(company->getCompanyID(), company->getCompanyID());
+		}
+		*/
+
 		RankedAVL<Employee>* employees_tree = company->getEmployeesTree();
 		TreeNode<Employee>* base_root = employees_tree->getRoot();
 
