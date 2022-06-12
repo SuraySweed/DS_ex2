@@ -512,6 +512,10 @@ inline TreeNode<T>* RankedAVL<T>::getLastInIntervalAux(TreeNode<T>* root, int hi
 		}
 	}
 	else {
+		/*
+		if (last == nullptr) {
+			last = root;
+		}*/
 		return getLastInIntervalAux(root->left, high, last);
 	}
 }
@@ -536,6 +540,10 @@ inline TreeNode<T>* RankedAVL<T>::getFirstInIntervalAux(TreeNode<T>* root, int l
 		}
 	}
 	else {
+		/*
+		if (first == nullptr) {
+			first = root;
+		}*/
 		return getFirstInIntervalAux(root->right, low, first);
 	}
 }

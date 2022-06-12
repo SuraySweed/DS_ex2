@@ -493,12 +493,22 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			TreeNode<Employee>* highNode = employeesTree->getLastInInterval(base_root, higherSalary);
 			TreeNode<Employee>* lowNode = employeesTree->getFirstInInterval(base_root, lowSalary);
 
+			if (highNode && lowNode) {
+				employeesTree->calcRank(base_root, highNode, &highRank);
+				employeesTree->calcRank(base_root, lowNode, &lowRank);
+				lowRank += 1;
+				employeesTree->calcSumOfGrades(base_root, highNode, &highSum);
+				employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
+				lowSum += lowNode->Grade;
+			}
+			/*
 			employeesTree->calcRank(base_root, highNode, &highRank);
 			employeesTree->calcRank(base_root, lowNode, &lowRank);
 			lowRank++;
 			employeesTree->calcSumOfGrades(base_root, highNode, &highSum);
 			employeesTree->calcSumOfGrades(base_root, lowNode, &lowSum);
 			lowSum += lowNode->Grade;
+			*/
 		}
 		if (lowerSalary == 0) {
 			lowSum += getSumOfGradeZeroSalary();
