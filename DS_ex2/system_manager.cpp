@@ -252,7 +252,7 @@ StatusType SystemManager::AcquireCompany(int acquirerID, int targetID, double fa
 	*/
 
 	// acquirerCompany already bought the targetCompany
-	if (acquirerCompany == targetCompany) return SUCCESS; ///// check if we have to return INVALID_INPUT
+	if (acquirerCompany == targetCompany) return INVALID_INPUT; ///// check if we have to return SUCCESS
 	
 	// update target company id to acquirer company id in the 3 data structures: company tree and hash table, hash and the big tree
 	//updateCompanyIDForEmployees(targetID, acquirerID);
@@ -507,7 +507,7 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 	if (abs(average + 0.1 - ((double)averageBumpGrade)) <= 0.0000000001) {
 		average += 0.1;
 	}
-	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average);
+	printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", average - 0.1);
 	return SUCCESS;
 }
 
