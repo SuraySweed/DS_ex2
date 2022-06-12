@@ -53,9 +53,8 @@ extern "C" {
             "SumOfBumpGradeBetweenTopWorkersByGroup ",
             "AverageBumpGradeBetweenSalaryByGroup ",
             "CompanyValue",
+            "BumpGradeToEmployees",
             "Quit"
-            //"BumpGradeToEmployees",
-            //"Quit"
     };
 
     static const char* ReturnValToStr(int val) {
@@ -140,7 +139,7 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
     static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void* DS, const char* const command);
     static errorType OnAverageBumpGradeBetweenSalaryByGroup(void* DS, const char* const command);
     static errorType OnCompanyValue(void* DS, const char* const command);
-    //static errorType OnBumpGradeToEmployees(void* DS, const char* const command);
+    static errorType OnBumpGradeToEmployees(void* DS, const char* const command);
     static errorType OnQuit(void** DS, const char* const command);
 
     /***************************************************************************/
@@ -183,11 +182,11 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
         case (COMPANY_VALUE_CMD):
             rtn_val = OnCompanyValue(DS, command_args);
             break;
-        /*
+        
         case (BUMP_GRADE_TO_EMPLOYEES_CMD):
             rtn_val = OnBumpGradeToEmployees(DS, command_args);
             break;
-        */
+       
         case (QUIT_CMD):
             rtn_val = OnQuit(&DS, command_args);
             break;
@@ -383,8 +382,8 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
     /***************************************************************************/
     /* OnBumpGradeToEmployees                                                        */
     /***************************************************************************/
-    /*
-     * 20 points Bonus function:
+    
+    // * 20 points Bonus function:
     static errorType OnBumpGradeToEmployees(void* DS, const char* const command) {
         int lowerSalary;
         int higherSalary;
@@ -402,7 +401,7 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
 
         return error_free;
     }
-    */
+    
 
     /***************************************************************************/
     /* OnQuit                                                                  */

@@ -23,7 +23,7 @@ HashTable::HashTable(const HashTable& hash_table) : size(hash_table.size), count
 	}
 }
 
-HashTable::~HashTable()
+/*HashTable::~HashTable()
 {
 	for (int i = 0; i < size; i++) {
 		if (employees[i]) {
@@ -32,7 +32,7 @@ HashTable::~HashTable()
 		}
 	}
 	delete[] employees;
-}
+}*/
 
 void HashTable::resize(int new_size, LinkedList* old_employees_array[], int old_size)
 {

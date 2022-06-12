@@ -21,7 +21,7 @@ public:
 	InvertedTree(int key, Company* data) : key(key), data(data), size(1), acquired_value(0), next(nullptr) {}
 	InvertedTree(const InvertedTree& invertedTree) = default;
 	InvertedTree& operator=(const InvertedTree& invertedTree) = default;
-	~InvertedTree();
+	~InvertedTree() = default;
 	
 	Company* getData() { return data; }
 	double getAcquiredValue() { return acquired_value; }
@@ -62,14 +62,14 @@ inline void InvertedTree::updateAcquiredValue(InvertedTree* node)
 	}
 }
 
-inline InvertedTree::~InvertedTree()
+/*inline InvertedTree::~InvertedTree()
 {
 	while (next) {
 		InvertedTree* toDelete = next;
 		next = next->next;
-		delete toDelete;
+		delete toDelete->data;
 	}
-}
+}*/
 
 inline InvertedTree* InvertedTree::find(InvertedTree* group)
 {

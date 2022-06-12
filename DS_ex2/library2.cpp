@@ -56,6 +56,11 @@ StatusType CompanyValue(void* DS, int companyID)
 }
 
 
+StatusType BumpGradeToEmployees(void* DS, int lowerSalary, int higherSalary, int bumpGrade)
+{
+	return StatusType();
+}
+
 void Quit(void** DS)
 {
 	delete ((SystemManager*)*DS);

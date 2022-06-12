@@ -23,7 +23,7 @@ public:
 	HashTable();
 	HashTable (const HashTable& hash_table);
 	HashTable& operator=(const HashTable& node) = default;
-	~HashTable();
+	~HashTable() = default;
 
 	void resize(int new_size, LinkedList* old_employees_array[], int old_size);
 	int HashFunction(int employee_id);

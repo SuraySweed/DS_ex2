@@ -357,8 +357,12 @@ inline TreeNode<T>* RankedAVL<T>::auxBuildTree(int left, int right, TreeNode<T>*
 	root->rank = root->right ? root->right->rank + 1 : 0;
 	root->sumOfGrades = root->right ? (root->right->sumOfGrades + root->right->Grade) : 0;
 	if (root->right && root->right->left) {
-		root->rank += root->right->left->rank + 1;
-		root->sumOfGrades += root->right->left->sumOfGrades + root->right->left->Grade - root->right->Grade;
+		TreeNode<T>* curr = root->right->left;
+		while (curr) {
+			root->rank += curr->rank + 1;
+			root->sumOfGrades += curr->sumOfGrades + curr->Grade;// -root->right->Grade;
+			curr = curr->left;
+		}
 	}
 	return root;
 }
@@ -448,8 +452,6 @@ inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grad
 	}
 
 	if (root && (*(root->data) > *data)) {
-		//sumOfGrade = root->Grade;//// = in +=
-		//rank = 1;
 		root->left = insertAux(root->left, data, grade, sumOfGrade, rank);
 	}
 	else if (root && (*(root->data) < *data)) {
@@ -484,10 +486,6 @@ inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, int* sum)
 	else {
 		m -= (root->rank + 1);
 		*sum += (root->sumOfGrades + root->Grade);
-		/*if (m != 0) {
-			*sum -= root->Grade;
-			m += 1;
-		}*/
 		sumBumpGradeAux(root->left, m, sum);
 		
 	}
@@ -512,10 +510,6 @@ inline TreeNode<T>* RankedAVL<T>::getLastInIntervalAux(TreeNode<T>* root, int hi
 		}
 	}
 	else {
-		/*
-		if (last == nullptr) {
-			last = root;
-		}*/
 		return getLastInIntervalAux(root->left, high, last);
 	}
 }

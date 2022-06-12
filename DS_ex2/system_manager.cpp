@@ -444,8 +444,8 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		TreeNode<Employee>* base_root = employees_tree->getRoot();
 
 		if (employees_tree->getMaxNodeData(base_root) && ((lowerSalary > employees_tree->getMaxNodeData(base_root)->getSalary()) ||
-			//((higherSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
-			//higherSalary < employees_tree->getMinNodeData(base_root)->getSalary())) ||
+			((higherSalary != 0 && lowerSalary != 0) && (employees_tree->getMinNodeData(base_root) &&
+			(higherSalary < employees_tree->getMinNodeData(base_root)->getSalary()))) ||
 			(higherSalary == 0 && company->getNumOfZeroSalaryEmployees() == 0))) {
 			return FAILURE;
 		}
@@ -479,8 +479,8 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 		TreeNode<Employee>* base_root = employeesTree->getRoot();
 
 		if (employeesTree->getMaxNodeData(base_root) && ((lowerSalary > employeesTree->getMaxNodeData(base_root)->getSalary()) ||
-			//((higherSalary != 0) && employeesTree->getMinNodeData(base_root)) && 
-			//(higherSalary < employeesTree->getMinNodeData(base_root)->getSalary())) ||
+			((higherSalary != 0 && lowerSalary != 0) && ((employeesTree->getMinNodeData(base_root)) && 
+			(higherSalary < employeesTree->getMinNodeData(base_root)->getSalary()))) ||
 			(higherSalary == 0 && getNumberOfZeroSalaryEmployees() == 0))) {
 			return FAILURE;
 		}
@@ -489,9 +489,11 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 			if (lowerSalary == 0 && employeesTree->getMinNodeData(base_root)) {
 				lowSalary = employeesTree->getMinNodeData(base_root)->getSalary();
 			}
-			
-			TreeNode<Employee>* highNode = employeesTree->getLastInInterval(base_root, higherSalary);
-			TreeNode<Employee>* lowNode = employeesTree->getFirstInInterval(base_root, lowSalary);
+			TreeNode<Employee>* highNode = nullptr, * lowNode = nullptr;
+			highNode = employeesTree->getLastInInterval(base_root, higherSalary);
+			if (highNode) {
+				lowNode = employeesTree->getFirstInInterval(base_root, lowSalary);
+			}
 
 			if (highNode && lowNode) {
 				employeesTree->calcRank(base_root, highNode, &highRank);
