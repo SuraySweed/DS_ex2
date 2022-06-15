@@ -14,7 +14,7 @@ public:
 	TreeNode* left;
 	TreeNode* right;
 	int Grade;
-	int sumOfGrades;
+	long long sumOfGrades;
 	int rank;
 	
 	TreeNode(const T& data_t);
@@ -43,8 +43,8 @@ class RankedAVL {
 	TreeNode<T>* auxBuildTree(int left, int right, TreeNode<T>* root, T** newArr, int grades[]);
 	void inorderArray(TreeNode<T>* root, T** arr, int& i);
 	TreeNode<T>* removeAux(TreeNode<T>* root, T* data, int grade);
-	TreeNode<T>* insertAux(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank);
-	void sumBumpGradeAux(TreeNode<T>* root, int m, unsigned int* sum);
+	TreeNode<T>* insertAux(TreeNode<T>* root, T* data, int grade, long long sumOfGrade, int rank);
+	void sumBumpGradeAux(TreeNode<T>* root, int m, long long* sum);
 	TreeNode<T>* getLastInIntervalAux(TreeNode<T>* root, int high, TreeNode<T>* last);
 	TreeNode<T>* getFirstInIntervalAux(TreeNode<T>* root, int low, TreeNode<T>* first);
 
@@ -66,14 +66,14 @@ public:
 	void fillArray(T* arr[]);
 	void mergeTree(T** arr1, int grades1[], int size1, T** arr2, int grades2[], int size2, T** newArr, int grades[]);
 	TreeNode<T>* findMinNodeInSubTree(TreeNode<T>* subTreeRoot);
-	void sumBumpGrade(int m, unsigned int* sum);
+	void sumBumpGrade(int m, long long* sum);
 	//void getEmployeesDataBetweenHighLow(int low, int high, int* Number, int* sum);
 	T* getMinNodeData(TreeNode<T>* root);
 	T* getMaxNodeData(TreeNode<T>* root);
 	TreeNode<T>* getLastInInterval(TreeNode<T>* root, int high);
 	TreeNode<T>* getFirstInInterval(TreeNode<T>* root, int low);
 	void calcRank(TreeNode<T>* root, TreeNode<T>* node, int* rank);
-	void calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, int* sum);
+	void calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, long long* sum);
 	void deleteNodes(TreeNode<T>* root);
 };
 
@@ -437,7 +437,7 @@ inline TreeNode<T>* RankedAVL<T>::removeAux(TreeNode<T>* root, T* data, int grad
 }
 
 template<class T>
-inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grade, int sumOfGrade, int rank)
+inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grade, long long sumOfGrade, int rank)
 {
 	if (root == nullptr) {
 		TreeNode<T>* new_root = new TreeNode<T>(*data);
@@ -469,7 +469,7 @@ inline TreeNode<T>* RankedAVL<T>::insertAux(TreeNode<T>* root, T* data, int grad
 }
 
 template<class T>
-inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, unsigned int* sum)
+inline void RankedAVL<T>::sumBumpGradeAux(TreeNode<T>* root, int m, long long* sum)
 {
 	if (!root || m == 0) {
 		return;
@@ -625,7 +625,7 @@ inline void RankedAVL<T>::calcRank(TreeNode<T>* root, TreeNode<T>* node, int* ra
 }
 
 template<class T>
-inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, int* sum)
+inline void RankedAVL<T>::calcSumOfGrades(TreeNode<T>* root, TreeNode<T>* node, long long* sum)
 {
 	if (*(root->data) == *(node->data)) {
 		//*sum += root->Grade;
@@ -726,7 +726,7 @@ inline TreeNode<T>* RankedAVL<T>::findMinNodeInSubTree(TreeNode<T>* subTreeRoot)
 }
 
 template<class T>
-inline void RankedAVL<T>::sumBumpGrade(int m, unsigned int* sum)
+inline void RankedAVL<T>::sumBumpGrade(int m, long long* sum)
 {
 	sumBumpGradeAux(_root, m, sum);
 }

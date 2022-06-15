@@ -269,14 +269,14 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 		return INVALID_INPUT;
 	}
 
-	unsigned int* sumBumpGrade = new unsigned int();
+	long long* sumBumpGrade = new long long();
 	if (companyID > 0) {
 		Company* company = companies[companyID - 1]->find(companies[companyID - 1])->getData();
 		if (company->getNumberOfEmployeesNonZero() < m) {
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		company->sumBumpGradesInCompany(m, (unsigned int*)sumBumpGrade);
+		company->sumBumpGradesInCompany(m, (long long*)sumBumpGrade);
 	}
 
 	else {
@@ -284,10 +284,10 @@ StatusType SystemManager::SumOfBumpGradeBetweenTopWorkersByGroup(int companyID, 
 			delete sumBumpGrade;
 			return FAILURE;
 		}
-		employeesTree->sumBumpGrade(m, (unsigned int*)sumBumpGrade);
+		employeesTree->sumBumpGrade(m, (long long*)sumBumpGrade);
 	}
 
-	printf("SumOfBumpGradeBetweenTopWorkersByGroup: %u\n", *sumBumpGrade);
+	printf("SumOfBumpGradeBetweenTopWorkersByGroup: %lld\n", *sumBumpGrade);
 	delete sumBumpGrade;
 	return SUCCESS;
 }
@@ -302,9 +302,9 @@ StatusType SystemManager::AverageBumpGradeBetweenSalaryByGroup(int companyID,
 
 	int lowSalary = lowerSalary;
 	int highRank = 0;
-	int highSum = 0;
+	long long highSum = 0;
 	int lowRank = 0;
-	int lowSum = 0; 
+	long long lowSum = 0; 
 
 	//get average of employees in specific company
 	if (companyID > 0) {

@@ -11,7 +11,7 @@ private:
 	int id;
 	int value;
 	int num_of_employees_with_zero_salary;
-	int sum_of_grades_of_zero_salary_employees;
+	long long sum_of_grades_of_zero_salary_employees;
 	int owner;	// at first, owner = currentCompanyID
 	RankedAVL<Employee> employees; // only with salary != 0
 	HashTable all_employees_table; // contain all the employees in the company
@@ -26,7 +26,7 @@ public:
 	int getCompanyID() { return id; }
 	int getValue() { return value; }
 	int getNumOfZeroSalaryEmployees() { return num_of_employees_with_zero_salary; }
-	int getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
+	long long getSumOfGradesOfZeroSalaryEmployees() { return sum_of_grades_of_zero_salary_employees; }
 	int getNumberOfEmployeesNonZero() { return employees.getNumberOfNodes(); }
 	HashTable* getEmployeesHashTable() { return &all_employees_table; }
 	RankedAVL<Employee>* getEmployeesTree() { return &employees; }
@@ -34,7 +34,7 @@ public:
 	int getNumberOfEmployees() { return all_employees_table.getCounter(); }
 	int getOwnerID() { return owner; }
 	void setNumOfZeroSalaryEmployees(int num) { num_of_employees_with_zero_salary = num; }
-	void setSumOfGradeZeroSalary(int sum) { sum_of_grades_of_zero_salary_employees = sum; }
+	void setSumOfGradeZeroSalary(long long sum) { sum_of_grades_of_zero_salary_employees = sum; }
 	void setOwnerID(int id) { owner = id; }
 	void setEmployeesTree(RankedAVL<Employee>& other);
 	void addToSumGradesZeroSalary(int added) { sum_of_grades_of_zero_salary_employees += added; }
@@ -46,7 +46,7 @@ public:
 	bool removeEmployeeFromEmployeesHash(Employee* employee);
 	void incZeroSalaryEmployees(Employee* employee);
 	void decZeroSalaryEmployees(Employee* employee);
-	void sumBumpGradesInCompany(int m, unsigned int* sum);
+	void sumBumpGradesInCompany(int m, long long* sum);
 	void updateEmployeesCompanyID(int acquirerID);
 	void updateSalaryToEmployee(int employeeID, int new_salary);
 	void updateGradeForEmployee(int employeeID, int new_grade);

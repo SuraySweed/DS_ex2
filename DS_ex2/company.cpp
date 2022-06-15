@@ -67,7 +67,7 @@ void Company::decZeroSalaryEmployees(Employee* employee)
 	}
 }
 
-void Company::sumBumpGradesInCompany(int m, unsigned int* sum)
+void Company::sumBumpGradesInCompany(int m,long long* sum)
 {
 	employees.sumBumpGrade(m, sum);
 }
